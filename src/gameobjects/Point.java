@@ -3,7 +3,6 @@ package gameobjects;
 import java.io.Serializable;
 
 /**
- *
  * 地图上的一个点
  */
 public class Point implements Serializable {

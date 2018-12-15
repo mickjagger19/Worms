@@ -16,11 +16,13 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 /**
- * 该类是client注册之后的连接界面，用于等待其他用户的注册
+ * 该类是client注册之后的连接界面，用于等待其他用户的注册。
+ * 只有一个静态实例： singelton
  * 其他用户注册后，该类被替换
  * 使用了 socket
  */
 public class ClientModel extends Observable {
+
     private static ClientModel singelton;
 
     private String serverIP;
@@ -84,7 +86,6 @@ public class ClientModel extends Observable {
                             // 发送 localPlayer 数据
                             if (otherPlayers != null && otherPlayers.size() > 0 && otherPlayers.contains(localPlayer)) {
 
-
                                 localPlayer = otherPlayers.get(otherPlayers.indexOf(localPlayer));
 
                                 // otherPlayers - localPlayer
@@ -143,6 +144,8 @@ public class ClientModel extends Observable {
     }
 
 
+    // 只在第一次调用时新建 clientModel
+    // 之后调用， 都返回该静态变量
     public static ClientModel getInstance() {
         if (singelton == null)
             singelton = new ClientModel();

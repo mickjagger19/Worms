@@ -29,6 +29,7 @@ import java.util.List;
 
 /**
  * 该类控制游戏中用户的动作
+ * Gamefield.fxml
  */
 public class GamefieldController implements Initializable {
 
@@ -48,6 +49,8 @@ public class GamefieldController implements Initializable {
 
     private ClientModel model;
 
+    private boolean speedUp = true;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -55,47 +58,85 @@ public class GamefieldController implements Initializable {
         gc = canvas.getGraphicsContext2D();
         hudgc = cv_hud.getGraphicsContext2D();
 
+
+
         pane.setOnKeyPressed(event -> {
-            System.out.println("current" + model.getCurrentPlayer().getName());
-            System.out.println("local" + model.getLocalPlayer().getName());
+//            System.out.println("current" + model.getCurrentPlayer().getName());
+//            System.out.println("local" + model.getLocalPlayer();.getName());
             if (model.getCurrentPlayer() != null && model.getCurrentPlayer().equals(model.getLocalPlayer())
             ) {
 
                     System.out.println("检测到用户匹配");
                     if (event.getCode() == KeyCode.SPACE) {
                         System.out.println("检测到空格键");
-                        model.getCurrentPlayer().getShoot().setCurrentSpeed(model.getCurrentPlayer().getShoot().getCurrentSpeed() >= 1 ? 0 : model.getCurrentPlayer().getShoot().getCurrentSpeed() + 0.01);
+                        double newSpeed = model.getCurrentPlayer().getShoot().getCurrentSpeed();
+                        if ( speedUp ) newSpeed += 0.03;
+                        else newSpeed -= 0.03;
+
+                        if ( newSpeed > 1 ) { newSpeed  = 2 - newSpeed; speedUp = false;}
+                        else if ( newSpeed < 0 ) { newSpeed  = -newSpeed; speedUp = true;}
+                        model.getCurrentPlayer().getShoot().setCurrentSpeed(newSpeed);
                     }
                     if (event.getCode() == KeyCode.UP) {
                         System.out.println("检测到向上");
-                        model.getLocalPlayer().getShoot().setAngle(model.getLocalPlayer().getShoot().getAngle() <= -180 ? 0 :
-                                model.getLocalPlayer().getShoot().getAngle() >= 180 ? -179 : model.getLocalPlayer().getShoot().getAngle() + 1);
+                        double currentAngle = model.getLocalPlayer().getShoot().getAngle();
+                        if ( model.getLocalPlayer().dir == Player.direction.left ) {
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle > 91 ? currentAngle - 1 : 90);
+                        }else
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle < 89 ? currentAngle + 1 : 90);
+
                     }
                     if (event.getCode() == KeyCode.DOWN) {
+
                         System.out.println("检测到向下");
-                        model.getLocalPlayer().getShoot().setAngle(model.getLocalPlayer().getShoot().getAngle() <= -179 ? 180 :
-                                model.getLocalPlayer().getShoot().getAngle() == 0 ? -1 : model.getLocalPlayer().getShoot().getAngle() - 1);
+                        double currentAngle = model.getLocalPlayer().getShoot().getAngle();
+                        if ( model.getLocalPlayer().dir == Player.direction.left ) {
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle < -91 ? currentAngle + 1 : -90);
+                        }else
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle > -89 ? currentAngle - 1 : -90);
+
+//                        model.getLocalPlayer().getShoot().setAngle(model.getLocalPlayer().getShoot().getAngle() <= -179 ? 180 :
+//                                model.getLocalPlayer().getShoot().getAngle() == 0 ? -1 : model.getLocalPlayer().getShoot().getAngle() - 1);
                     }
                     if (event.getCode() == KeyCode.LEFT) {
+
                         System.out.println("检测到向左");
                         model.getLocalPlayer().movePlayer(-2);
+                        model.getLocalPlayer().previousDir =  model.getLocalPlayer().dir;
+                        model.getLocalPlayer().dir = Player.direction.left;
+                        if ( model.getLocalPlayer().previousDir == Player.direction.right ) {
+                            if (model.getLocalPlayer().getShoot().getAngle() > 0)
+                                model.getLocalPlayer().getShoot().setAngle(180 - model.getLocalPlayer().getShoot().getAngle());
+                            else model.getLocalPlayer().getShoot().setAngle(-180 - model.getLocalPlayer().getShoot().getAngle());
+                        }
+
+
+
                     }
                     if (event.getCode() == KeyCode.RIGHT) {
                         System.out.println("检测到向右");
                         model.getLocalPlayer().movePlayer(2);
+                        model.getLocalPlayer().previousDir =  model.getLocalPlayer().dir;
+                        model.getLocalPlayer().dir = Player.direction.right;
+                        if ( model.getLocalPlayer().previousDir == Player.direction.left ) {
+                            if (model.getLocalPlayer().getShoot().getAngle() > 0)
+                                model.getLocalPlayer().getShoot().setAngle(180 - model.getLocalPlayer().getShoot().getAngle());
+                            else model.getLocalPlayer().getShoot().setAngle(-180 - model.getLocalPlayer().getShoot().getAngle());
+                        }
                     }
                     model.sendData();
 
             }
         });
         pane.setOnKeyReleased(event -> {
-            if (model.getCurrentPlayer() != null && model.getLocalPlayer() != null) {
-                if (model.getCurrentPlayer().equals(model.getLocalPlayer())) {
-                    if (event.getCode() == KeyCode.ENTER) {
+            if (event.getCode() == KeyCode.SPACE) {
+                if (model.getCurrentPlayer() != null && model.getLocalPlayer() != null) {
+                    if (model.getCurrentPlayer().equals(model.getLocalPlayer())) {
                         double speed = model.getCurrentPlayer().getShoot().getCurrentSpeed() * 90;
                         model.getRockets().add(new Rocket(model.getLocalPlayer().getPosition(), speed, model.getCurrentPlayer().getShoot().getAngle()));
                         model.getLocalPlayer().getShoot().setFired(true);
                         model.sendData();
+                        speedUp = true;
                     }
                 }
             }
@@ -154,6 +195,8 @@ public class GamefieldController implements Initializable {
                 , 100, 35);
     }
 
+
+
     private void drawRockets() {
         for (Rocket r : model.getRockets()) {
             Explosion explosion = r.fly(model.getWorld());
@@ -191,9 +234,9 @@ public class GamefieldController implements Initializable {
 
                     if (!p.isDead()) {
                         if (p.getShoot().getAngle() < 90 && p.getShoot().getAngle() > -90) {
-                            gcPl.drawImage(new Image(String.format("/images/worms/Rworm%d.png", p.getWormSkin())), x - 8, y - 24, 16, 24);
+                            gcPl.drawImage(new Image(String.format("/images/worms/%cworm%d.png",p.dir == Player.direction.left ? 'L' : 'R' , p.getWormSkin())), x - 8, y - 24, 16, 24);
                         } else {
-                            gcPl.drawImage(new Image(String.format("/images/worms/worm%d.png", p.getWormSkin())), x - 8, y - 24, 16, 24);
+                            gcPl.drawImage(new Image(String.format("/images/worms/%cworm%d.png", p.dir == Player.direction.left ? 'L' : 'R' ,p.getWormSkin())), x - 8, y - 24, 16, 24);
                         }
                     } else {
                         gcPl.drawImage(new Image("/images/grave.png"), x - 8, y - 24, 16, 24);

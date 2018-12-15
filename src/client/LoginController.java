@@ -59,13 +59,6 @@ public class LoginController implements Initializable {
             }
         });
 
-        // 按下"注册"， 进入等待连接状态
-        tf_playername.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                connect(null);
-            }
-        });
     }
 
     public void changeSkin(KeyEvent event) {
@@ -117,9 +110,9 @@ public class LoginController implements Initializable {
     }
 
     public void connect(ActionEvent actionEvent) {
+
         ClientModel.getInstance().setLocalPlayer(new Player(tf_playername.getText(), skinID));
         ClientModel.getInstance().setServerIP(tf_serverip.getText());
-
 
         Stage stage = new Stage();
         Parent root = null;
