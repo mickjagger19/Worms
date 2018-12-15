@@ -55,9 +55,10 @@ public class GamefieldController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         model = ClientModel.getInstance();
-        gc = canvas.getGraphicsContext2D();
-        hudgc = cv_hud.getGraphicsContext2D();
 
+        gc = canvas.getGraphicsContext2D();
+
+        hudgc = cv_hud.getGraphicsContext2D();
 
 
         pane.setOnKeyPressed(event -> {
@@ -73,6 +74,7 @@ public class GamefieldController implements Initializable {
                         if ( speedUp ) newSpeed += 0.03;
                         else newSpeed -= 0.03;
 
+
                         if ( newSpeed > 1 ) { newSpeed  = 2 - newSpeed; speedUp = false;}
                         else if ( newSpeed < 0 ) { newSpeed  = -newSpeed; speedUp = true;}
                         model.getCurrentPlayer().getShoot().setCurrentSpeed(newSpeed);
@@ -81,9 +83,13 @@ public class GamefieldController implements Initializable {
                         System.out.println("检测到向上");
                         double currentAngle = model.getLocalPlayer().getShoot().getAngle();
                         if ( model.getLocalPlayer().dir == Player.direction.left ) {
-                            model.getLocalPlayer().getShoot().setAngle( currentAngle > 91 ? currentAngle - 1 : 90);
+                            if ( currentAngle >= 0 )
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle < 92 ? 90 : currentAngle - 2 );
+                            else if ( currentAngle > -178 )
+                                model.getLocalPlayer().getShoot().setAngle( currentAngle - 2 );
+                            else model.getLocalPlayer().getShoot().setAngle( 180 );
                         }else
-                            model.getLocalPlayer().getShoot().setAngle( currentAngle < 89 ? currentAngle + 1 : 90);
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle < 88 ? currentAngle + 2 : 90);
 
                     }
                     if (event.getCode() == KeyCode.DOWN) {
@@ -91,15 +97,18 @@ public class GamefieldController implements Initializable {
                         System.out.println("检测到向下");
                         double currentAngle = model.getLocalPlayer().getShoot().getAngle();
                         if ( model.getLocalPlayer().dir == Player.direction.left ) {
-                            model.getLocalPlayer().getShoot().setAngle( currentAngle < -91 ? currentAngle + 1 : -90);
+                            if ( currentAngle < 0 )
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle < -92 ? currentAngle + 2 : -90  );
+                            else if ( currentAngle <  178 )
+                                model.getLocalPlayer().getShoot().setAngle( currentAngle + 2 );
+                            else model.getLocalPlayer().getShoot().setAngle( 180 );
                         }else
-                            model.getLocalPlayer().getShoot().setAngle( currentAngle > -89 ? currentAngle - 1 : -90);
+                            model.getLocalPlayer().getShoot().setAngle( currentAngle > -88 ? currentAngle - 2 : -90);
 
 //                        model.getLocalPlayer().getShoot().setAngle(model.getLocalPlayer().getShoot().getAngle() <= -179 ? 180 :
 //                                model.getLocalPlayer().getShoot().getAngle() == 0 ? -1 : model.getLocalPlayer().getShoot().getAngle() - 1);
                     }
                     if (event.getCode() == KeyCode.LEFT) {
-
                         System.out.println("检测到向左");
                         model.getLocalPlayer().movePlayer(-2);
                         model.getLocalPlayer().previousDir =  model.getLocalPlayer().dir;
@@ -109,9 +118,6 @@ public class GamefieldController implements Initializable {
                                 model.getLocalPlayer().getShoot().setAngle(180 - model.getLocalPlayer().getShoot().getAngle());
                             else model.getLocalPlayer().getShoot().setAngle(-180 - model.getLocalPlayer().getShoot().getAngle());
                         }
-
-
-
                     }
                     if (event.getCode() == KeyCode.RIGHT) {
                         System.out.println("检测到向右");
@@ -128,8 +134,10 @@ public class GamefieldController implements Initializable {
 
             }
         });
+
         pane.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.SPACE) {
+                System.out.println("检测到空格释放");
                 if (model.getCurrentPlayer() != null && model.getLocalPlayer() != null) {
                     if (model.getCurrentPlayer().equals(model.getLocalPlayer())) {
                         double speed = model.getCurrentPlayer().getShoot().getCurrentSpeed() * 90;
@@ -143,6 +151,8 @@ public class GamefieldController implements Initializable {
         });
 
         Timer timer = new Timer(true);
+
+        // 底部状态栏
         timer.scheduleAtFixedRate(new TimerTask() {
                                       @Override
                                       public void run() {
@@ -150,25 +160,35 @@ public class GamefieldController implements Initializable {
                                                       hudgc.setFont(new Font("System", 14));
                                                       hudgc.drawImage(new Image("/images/hud_background.png"), 0, 0, 1024, 50);
 
-                                                      hudgc.setFill(Color.DARKGRAY);
+
+
+                                                      hudgc.setFill(Color.color(0.937,0.294,0.227,1));
+
                                                       hudgc.fillRoundRect(10, 10, 104, 24, 5, 5);
-                                                      hudgc.setStroke(Color.BLACK);
+
+                                                      hudgc.setStroke(Color.WHITE);
                                                       hudgc.strokeRoundRect(10, 10, 104, 24, 5, 5);
 
 
                                                       if (model.getCurrentPlayer() != null && model.getLocalPlayer() != null) {
-                                                          hudgc.setFill(Color.DARKRED);
+                                                          // 速度条的填充颜色
+                                                          hudgc.setFill(Color.color(0.937,0.294,0.227,1));
                                                           hudgc.fillRoundRect(12, 12, model.getLocalPlayer().getShoot().getCurrentSpeed() * 100, 20, 5, 5);
-                                                          hudgc.setStroke(Color.WHITE);
+                                                          // 速度条填充字
+                                                          hudgc.setStroke(Color.BLACK);
                                                           hudgc.strokeText(String.format("%d%%", (int) (model.getLocalPlayer().getShoot().getCurrentSpeed() * 100)), 49, 26);
 
+                                                          // 玩家位置信息
                                                           if (model.getLocalPlayer().getPosition() != null) {
-                                                              hudgc.setStroke(Color.WHITE);
-                                                              hudgc.strokeText(String.format("Player: X: %d Y: %d", model.getLocalPlayer().getPosition().getxCoord(),
-                                                                      model.getLocalPlayer().getPosition().getyCoord()), 400, 15);
+                                                              hudgc.setStroke(Color.color(0.937,0.294,0.227,1));
+                                                              hudgc.strokeText(String.format("%s: X: %d Y: %d",model.getLocalPlayer().getName(), model.getLocalPlayer().getPosition().getxCoord(),
+                                                                      model.getLocalPlayer().getPosition().getyCoord()), 410, 20);
                                                           }
+                                                          // 角度信息
                                                           hudgc.setStroke(Color.ORANGE);
                                                           hudgc.strokeText(String.format("角度: %.2f", model.getLocalPlayer().getShoot().getAngle()), 200, 35);
+
+                                                          // 生命值
                                                           if (model.getLocalPlayer() != null && !model.getLocalPlayer().isDead()) {
                                                               hudgc.setFill(Color.RED);
                                                               hudgc.setFont(new Font("System", 24));
@@ -194,7 +214,6 @@ public class GamefieldController implements Initializable {
                                   }
                 , 100, 35);
     }
-
 
 
     private void drawRockets() {
@@ -251,18 +270,19 @@ public class GamefieldController implements Initializable {
         if (model.getWorld() != null) {
             GraphicsContext gcgf = canvas_gamefield.getGraphicsContext2D();
             if (ClientModel.getInstance().getWorld().isWorldChanged()) {
-                //System.out.println("[Client] Welt gezeichnet!");
                 ClientModel.getInstance().getWorld().setWorldChanged();
                 gcgf.clearRect(0, 0, canvas_gamefield.getWidth(), canvas_gamefield.getHeight());
+
+                // 土地表层颜色
                 for (Surface surface : ClientModel.getInstance().getWorld().getGameWorld()) {
                     gcgf.setStroke(Color.GREEN);
                     gcgf.setLineWidth(5);
                     gcgf.strokePolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
                 }
 
-
+                // 土地的颜色
                 for (int i = 0; i < ClientModel.getInstance().getWorld().getGameWorld().size(); i++) {
-                    gcgf.setFill(Color.DARKGRAY);
+                    gcgf.setFill(Color.BROWN);
                     gcgf.fillPolygon(ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getyCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords().length);
@@ -285,9 +305,13 @@ public class GamefieldController implements Initializable {
                             gc.drawImage(new Image("/images/enemy_arrow.png"), p.getPosition().getxCoord() - 6,
                                     p.getPosition().getyCoord() - 70, 11, 10);
                         }
+
+                        // 名字
                         gc.setFill(Color.BLACK);
                         gc.setFont(new Font("System", 12));
                         gc.fillText(p.getName(), p.getPosition().getxCoord() - (getStringWidth(p.getName(), new Font("System", 12)) / 2), p.getPosition().getyCoord() - 45);
+
+                        // 生命值
                         gc.setFill(Color.RED);
                         gc.setFont(new Font("System", 10));
                         gc.fillText(String.format("%d%%", p.getHealth()), p.getPosition().getxCoord() -
@@ -302,15 +326,18 @@ public class GamefieldController implements Initializable {
             //Localplayersign
             if (model.getCurrentPlayer() != null && model.getCurrentPlayer().getPosition() != null)
                 if (!model.getCurrentPlayer().equals(model.getLocalPlayer()))
+                    // 当前行动的玩家头上的箭头
                     gc.drawImage(new Image("/images/current_arrow.png"), model.getCurrentPlayer().getPosition().getxCoord() - 6,
                             model.getCurrentPlayer().getPosition().getyCoord() - 70, 11, 10);
+                // 本地玩家头上的箭头
             if (model.getLocalPlayer() != null && model.getLocalPlayer().getPosition() != null)
                 gc.drawImage(new Image("/images/local_arrow.png"), model.getLocalPlayer().getPosition().getxCoord() - 6,
                         model.getLocalPlayer().getPosition().getyCoord() - 70, 11, 10);
+
+            // 死亡玩家
             if (model.getLocalPlayer() != null && model.getLocalPlayer().isDead()) {
                 gc.drawImage(new Image("/images/dead.png"), 384, 160, 256, 256);
             }
-
 
             if (model.getCurrentPlayer() != null && model.getCurrentPlayer().getPosition() != null) {
                 //Targetmarker
@@ -334,11 +361,15 @@ public class GamefieldController implements Initializable {
                 else{
                     b = 50;
                 }
-                gc.setFill(Color.BLACK);
-                gc.fillOval(x + b - 4, y - a - 4, 8, 8);
-                gc.setFill(Color.GOLD);
-                gc.fillOval(x + b - 3, y - a - 3, 6, 6);
-                //gc.drawImage(new Image("/images/crossfade.png"), mouse.getxCoord() - 11, mouse.getyCoord() - 11, 21, 21);
+//                gc.setFill(Color.RED);
+//                gc.fillOval(x + b - 4, y - a - 4, 8, 8);
+//                gc.setFill(Color.BROWN);
+//                gc.fillOval(x + b - 3, y - a - 3, 6, 6);
+//                if ( model.getCurrentPlayer().dir == Player.direction.left )
+                    gc.drawImage(new Image("/images/sight.png"), x + b - 10, y - a );
+//                else
+//                    gc.drawImage(new Image("/images/sight.png"), x + b - 8, y - a );
+
 
             }
         }

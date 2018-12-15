@@ -3,7 +3,9 @@ package gameobjects;
 import java.io.Serializable;
 
 /**
- * 被发往 server 的类， 包含发射的角度
+ *
+ *  计算发射物的轨迹
+ *  包含发射的角度
  *
  */
 public class Shoot implements Serializable{

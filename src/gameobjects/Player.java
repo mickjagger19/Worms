@@ -37,8 +37,6 @@ public class Player implements Serializable {
     public direction dir = direction.right;
     public direction previousDir = direction.right;
 
-
-
     //指定昵称，皮肤随机
     public Player(String playername) {
         name = playername;

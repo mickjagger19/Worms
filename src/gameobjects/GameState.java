@@ -53,12 +53,14 @@ public class GameState implements Serializable {
         round++;
         left_TeamA = new LinkedList<>(teamA.values());
         left_TeamB = new LinkedList<>(teamB.values());
+        String team = "B";
 
         if (getDeadPlayer(teamA.values()).size() == teamA.size()) {
             int rec = getDeadPlayer(teamB.values()).size() == 0 ? 3 : getDeadPlayer(teamB.values()).size() < teamB.size() ? 2 : 1;
             info.setScore_b(info.getScore_b() + rec);
             healPlayer();
             replacePlayers();
+
             System.out.println("[S] B队得分.");
         } else if (getDeadPlayer(teamB.values()).size() == teamB.size()) {
             int rec = info.getScore_a() + getDeadPlayer(teamA.values()).size() == 0 ? 3 : getDeadPlayer(teamA.values()).size() < teamA.size() ? 2 : 1;
@@ -66,8 +68,9 @@ public class GameState implements Serializable {
             healPlayer();
             replacePlayers();
             System.out.println("[S] A队得分.");
+            team = "A";
         }
-        System.out.println("[S] 新的一轮开始了.");
+        System.out.println("[S] 新的一轮开始了. 现在轮到 " + team);
     }
 
     public Player nextPlayer() {

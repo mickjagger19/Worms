@@ -224,14 +224,17 @@ public class ServerViewController implements Initializable {
             //model.getWorld().setWorldChanged();
             GraphicsContext gcgf = canvas_gamefield.getGraphicsContext2D();
             gcgf.clearRect(0, 0, canvas_gamefield.getWidth(), canvas_gamefield.getHeight());
+
+            // 土地表层
             for (Surface surface : model.getWorld().getGameWorld()) {
                 gcgf.setStroke(Color.GREEN);
                 gcgf.setLineWidth(5);
                 gcgf.strokePolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
             }
 
+            // 土地颜色
             for (int i = 0; i < model.getWorld().getGameWorld().size(); i++) {
-                gcgf.setFill(Color.DARKGRAY);
+                gcgf.setFill(Color.BROWN);
                 gcgf.fillPolygon(model.getWorld().getGameWorld().get(i).getxCoords(),
                         model.getWorld().getGameWorld().get(i).getyCoords(),
                         model.getWorld().getGameWorld().get(i).getxCoords().length);

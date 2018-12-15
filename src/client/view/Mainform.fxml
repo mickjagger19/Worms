@@ -43,8 +43,7 @@
             <Label prefWidth="80.0" style="-fx-text-fill: lawngreen;" text="     昵称:">
                <font>
                   <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
+               </font></Label>
             <TextField fx:id="tf_playername" prefWidth="150.0" promptText="玩家名称" style="-fx-background-color: white; -fx-border-color: lawngreen; -fx-border-width: 3px; -fx-border-radius: 5px; -fx-background-radius: 5px;" text="Mick" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>

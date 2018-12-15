@@ -59,6 +59,13 @@ public class LoginController implements Initializable {
             }
         });
 
+        // 按下"注册"， 进入等待连接状态
+        tf_playername.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                connect(null);
+            }
+        });
     }
 
     public void changeSkin(KeyEvent event) {
