@@ -36,6 +36,7 @@ public class LoginController implements Initializable {
     public VBox mainPane;
     public Button bt_left;
     public Button bt_right;
+    public Button bt_login;
     public ImageView iv_skin;
 
     private int skinID = 0;
@@ -121,6 +122,7 @@ public class LoginController implements Initializable {
         ClientModel.getInstance().setLocalPlayer(new Player(tf_playername.getText(), skinID));
         ClientModel.getInstance().setServerIP(tf_serverip.getText());
 
+
         Stage stage = new Stage();
         Parent root = null;
         try {
@@ -135,6 +137,12 @@ public class LoginController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // 关闭登录窗口
+        stage = (Stage) bt_login.getScene().getWindow();
+
+        stage.close();
+
     }
 
     public void startServer(ActionEvent actionEvent) {

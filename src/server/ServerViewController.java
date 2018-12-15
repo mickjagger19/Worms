@@ -234,7 +234,7 @@ public class ServerViewController implements Initializable {
 
             // 土地颜色
             for (int i = 0; i < model.getWorld().getGameWorld().size(); i++) {
-                gcgf.setFill(Color.BROWN);
+                gcgf.setFill(Color.SANDYBROWN);
                 gcgf.fillPolygon(model.getWorld().getGameWorld().get(i).getxCoords(),
                         model.getWorld().getGameWorld().get(i).getyCoords(),
                         model.getWorld().getGameWorld().get(i).getxCoords().length);

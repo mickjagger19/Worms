@@ -162,11 +162,11 @@ public class GamefieldController implements Initializable {
 
 
 
-                                                      hudgc.setFill(Color.color(0.937,0.294,0.227,1));
+                                                      hudgc.setFill(Color.WHITE);
 
                                                       hudgc.fillRoundRect(10, 10, 104, 24, 5, 5);
 
-                                                      hudgc.setStroke(Color.WHITE);
+                                                      hudgc.setStroke(Color.PINK);
                                                       hudgc.strokeRoundRect(10, 10, 104, 24, 5, 5);
 
 
@@ -176,17 +176,25 @@ public class GamefieldController implements Initializable {
                                                           hudgc.fillRoundRect(12, 12, model.getLocalPlayer().getShoot().getCurrentSpeed() * 100, 20, 5, 5);
                                                           // 速度条填充字
                                                           hudgc.setStroke(Color.BLACK);
-                                                          hudgc.strokeText(String.format("%d%%", (int) (model.getLocalPlayer().getShoot().getCurrentSpeed() * 100)), 49, 26);
+                                                          hudgc.strokeText(String.format("%d%%", (int) (model.getLocalPlayer().getShoot().getCurrentSpeed() * 100)), 49, 25);
 
                                                           // 玩家位置信息
                                                           if (model.getLocalPlayer().getPosition() != null) {
-                                                              hudgc.setStroke(Color.color(0.937,0.294,0.227,1));
+                                                              hudgc.setStroke(Color.ORANGE);
                                                               hudgc.strokeText(String.format("%s: X: %d Y: %d",model.getLocalPlayer().getName(), model.getLocalPlayer().getPosition().getxCoord(),
-                                                                      model.getLocalPlayer().getPosition().getyCoord()), 410, 20);
+                                                                      model.getLocalPlayer().getPosition().getyCoord()), 420, 33);
                                                           }
+
+                                                          // 现在操作的玩家信息
+                                                          if (model.getLocalPlayer().getPosition() != null) {
+                                                              hudgc.setStroke(Color.ORANGE);
+                                                              hudgc.strokeText(String.format("现在轮到：%s",model.getCurrentPlayer().getName()), 670, 33);
+                                                          }
+
+
                                                           // 角度信息
                                                           hudgc.setStroke(Color.ORANGE);
-                                                          hudgc.strokeText(String.format("角度: %.2f", model.getLocalPlayer().getShoot().getAngle()), 200, 35);
+                                                          hudgc.strokeText(String.format("角度: %.2f", model.getLocalPlayer().getShoot().getAngle()), 200, 33);
 
                                                           // 生命值
                                                           if (model.getLocalPlayer() != null && !model.getLocalPlayer().isDead()) {
@@ -282,7 +290,7 @@ public class GamefieldController implements Initializable {
 
                 // 土地的颜色
                 for (int i = 0; i < ClientModel.getInstance().getWorld().getGameWorld().size(); i++) {
-                    gcgf.setFill(Color.BROWN);
+                    gcgf.setFill(Color.SANDYBROWN);
                     gcgf.fillPolygon(ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getyCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords().length);
@@ -296,7 +304,7 @@ public class GamefieldController implements Initializable {
         if (model.getOtherPlayers().size() <= 0 || model.getOtherPlayers().size() % 2 == 0) {
             gc.drawImage(new Image("/images/wait.png"), 384, 160, 256, 256);
             gc.setFont(new Font("System", 18));
-            gc.fillText("   等待玩家中......", 515 - getStringWidth("Warte auf Spieler...", new Font("System", 18)) / 2, 420);
+            gc.fillText("等待玩家中......", 515 - getStringWidth("等待玩家中......", new Font("System", 18)) / 2, 420);
         } else {
             for (Player p : model.getOtherPlayers()) {
                 if (p != null && p.getPosition() != null) {

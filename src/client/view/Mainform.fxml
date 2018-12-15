@@ -65,7 +65,7 @@
             </Button>
          </children>
       </HBox>
-      <Button defaultButton="true" mnemonicParsing="false" onAction="#connect" style="-fx-background-color: orange; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: darkred; -fx-border-width: 3px; -fx-border-radius: 5px; -fx-background-insets: 3px; -fx-font-size: 18px;" text="登录">
+      <Button id="bt_login" fx:id="bt_login" defaultButton="true" mnemonicParsing="false" onAction="#connect" style="-fx-background-color: orange; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: darkred; -fx-border-width: 3px; -fx-border-radius: 5px; -fx-background-insets: 3px; -fx-font-size: 18px;" text="登录">
          <font>
             <Font size="24.0" />
          </font></Button>
