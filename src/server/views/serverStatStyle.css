@@ -1,0 +1,10 @@
+#pane{
+    -fx-background-image: url("/images/titlemenu.png");
+}
+.scoreboard{
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+}
+.lbl{
+    -fx-text-fill: white;
+}

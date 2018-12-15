@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="javafx-12">
+    <CLASSES>
+      <root url="file:///Library/Java/javafx-sdk-12/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file:///Library/Java/javafx-sdk-12/lib" />
+    </NATIVE>
+    <SOURCES>
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.base" />
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.controls" />
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.fxml" />
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.graphics" />
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.media" />
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.swing" />
+      <root url="file:///Library/Java/javafx-sdk-12/lib/src/javafx.web" />
+    </SOURCES>
+    <jarDirectory url="file:///Library/Java/javafx-sdk-12/lib" recursive="false" />
+  </library>
+</component>

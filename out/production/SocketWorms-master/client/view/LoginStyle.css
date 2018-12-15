@@ -1,0 +1,13 @@
+#bt_left{
+    -fx-graphic: url("../../images/arrow_left.png");
+}
+#bt_right {
+    -fx-graphic: url("../../images/arrow_right.png");
+}
+#mainPane{
+    -fx-background-image: url("../../images/titlemenu.png");
+}
+
+.arrowButton{
+    -fx-background-color: transparent;
+}

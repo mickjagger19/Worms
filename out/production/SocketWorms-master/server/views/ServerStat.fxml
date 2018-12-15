@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="pane" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="461.0" prefWidth="531.0" stylesheets="@serverStatStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="server.ServerStatController">
+   <children>
+      <VBox spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <children>
+            <HBox spacing="50.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="15.0">
+                     <children>
+                        <HBox>
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/badge.png" />
+                                 </image>
+                              </ImageView>
+                              <VBox alignment="CENTER" spacing="5.0" styleClass="scoreboard">
+                                 <children>
+                                    <HBox>
+                                       <children>
+                                          <Label alignment="CENTER" prefWidth="30.0" text="A" />
+                                          <Label alignment="CENTER" prefWidth="30.0" text="B" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label fx:id="lb_pA" alignment="CENTER" prefWidth="30.0" text="00" />
+                                          <Label fx:id="lb_pB" alignment="CENTER" prefWidth="30.0" text="00" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/dead.png" />
+                                 </image>
+                              </ImageView>
+                              <VBox alignment="CENTER" spacing="5.0" styleClass="scoreboard">
+                                 <children>
+                                    <HBox>
+                                       <children>
+                                          <Label alignment="CENTER" prefWidth="30.0" text="A" />
+                                          <Label alignment="CENTER" prefWidth="30.0" text="B" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label fx:id="lb_dA" alignment="CENTER" prefWidth="30.0" text="00" />
+                                          <Label fx:id="lb_dB" alignment="CENTER" prefWidth="30.0" text="00" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox spacing="25.0">
+                     <children>
+                        <HBox alignment="CENTER" spacing="15.0">
+                           <children>
+                              <ImageView fx:id="iv_curSkin" fitHeight="48.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../images/worms/worm0.png" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="lb_curPlayer" text="Aktueller Spieler" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="24.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <HBox alignment="CENTER" prefWidth="100.0" styleClass="scoreboard">
+                                       <children>
+                                          <Label text="♥" textFill="#b5200d">
+                                             <font>
+                                                <Font name="System Bold" size="22.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lb_health" text="100" textFill="#b5200d">
+                                             <font>
+                                                <Font name="System Bold" size="22.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="15.0">
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="lbl" text="角度">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER" styleClass="scoreboard">
+                                       <children>
+                                          <Label fx:id="lb_angle" text="00">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="°">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <VBox>
+                           <children>
+                              <HBox alignment="CENTER" spacing="50.0">
+                                 <children>
+                                    <Label styleClass="lbl" text="Position">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="50.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefWidth="100.0" spacing="7.0" styleClass="scoreboard">
+                                       <children>
+                                          <Label text="X">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lb_curX" text="000">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" prefWidth="100.0" spacing="7.0" styleClass="scoreboard">
+                                       <children>
+                                          <Label text="Y">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lb_curY" text="000">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label text="Spieler" textFill="#cd0909">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="CENTER" prefWidth="5000.0" text="A" textFill="#cd0909">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefWidth="5000.0" text="B" textFill="#cd0909" GridPane.columnIndex="1">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </GridPane>
+                  <HBox alignment="CENTER" spacing="5.0" />
+                  <HBox alignment="CENTER" spacing="5.0">
+                     <children>
+                        <ListView fx:id="lv_tA" HBox.hgrow="ALWAYS" />
+                        <ListView fx:id="lv_tB" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
