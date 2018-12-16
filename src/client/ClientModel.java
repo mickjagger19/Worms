@@ -35,6 +35,7 @@ public class ClientModel extends Observable {
 
     // 除了当前 localPlayer 以外的所有 Player
     private List<Player> otherPlayers;
+
     private List<Rocket> rockets;
     private GameWorld world;
 
@@ -43,6 +44,7 @@ public class ClientModel extends Observable {
 
     private ClientModel() {
         otherPlayers = new LinkedList<>();
+
         rockets = new LinkedList<>();
 
         Timer t = new Timer(true);

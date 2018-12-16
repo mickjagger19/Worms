@@ -1,6 +1,5 @@
 package client;
 
-import controller.Painter;
 import gameobjects.*;
 import gameobjects.Point;
 import javafx.application.Platform;
@@ -8,24 +7,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.*;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 
-import java.awt.*;
-import java.awt.Rectangle;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 /**
  * 该类控制游戏中用户的动作
@@ -42,21 +35,40 @@ public class GamefieldController implements Initializable {
     public Canvas cv_hud;
 
     @FXML
+    private Canvas Canvas_parabola;
+
+    @FXML
     public AnchorPane pane;
 
+
+
+
+    public static Point currentPoint = new Point(0,0);
+
+    public static List<Point> tracks;
+
+
+    private static Explosion explosion;
     private GraphicsContext gc;
     private GraphicsContext hudgc;
+    private GraphicsContext paragc;
+
 
     private ClientModel model;
 
     private boolean speedUp = true;
 
+    public static int  drawTimes = 0;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         model = ClientModel.getInstance();
 
         gc = canvas.getGraphicsContext2D();
+
+        paragc = Canvas_parabola.getGraphicsContext2D();
 
         hudgc = cv_hud.getGraphicsContext2D();
 
@@ -66,8 +78,6 @@ public class GamefieldController implements Initializable {
 //            System.out.println("local" + model.getLocalPlayer();.getName());
             if (model.getCurrentPlayer() != null && model.getCurrentPlayer().equals(model.getLocalPlayer())
             ) {
-
-                    System.out.println("检测到用户匹配");
                     if (event.getCode() == KeyCode.SPACE) {
                         System.out.println("检测到空格键");
                         double newSpeed = model.getCurrentPlayer().getShoot().getCurrentSpeed();
@@ -101,7 +111,7 @@ public class GamefieldController implements Initializable {
                             model.getLocalPlayer().getShoot().setAngle( currentAngle < -92 ? currentAngle + 2 : -90  );
                             else if ( currentAngle <  178 )
                                 model.getLocalPlayer().getShoot().setAngle( currentAngle + 2 );
-                            else model.getLocalPlayer().getShoot().setAngle( 180 );
+                            else model.getLocalPlayer().getShoot().setAngle( -180 );
                         }else
                             model.getLocalPlayer().getShoot().setAngle( currentAngle > -88 ? currentAngle - 2 : -90);
 
@@ -141,7 +151,7 @@ public class GamefieldController implements Initializable {
                 if (model.getCurrentPlayer() != null && model.getLocalPlayer() != null) {
                     if (model.getCurrentPlayer().equals(model.getLocalPlayer())) {
                         double speed = model.getCurrentPlayer().getShoot().getCurrentSpeed() * 90;
-                        model.getRockets().add(new Rocket(model.getLocalPlayer().getPosition(), speed, model.getCurrentPlayer().getShoot().getAngle()));
+                        model.getRockets().add(new Rocket(model.getCurrentPlayer().getPosition(), speed, model.getCurrentPlayer().getShoot().getAngle()));
                         model.getLocalPlayer().getShoot().setFired(true);
                         model.sendData();
                         speedUp = true;
@@ -152,10 +162,11 @@ public class GamefieldController implements Initializable {
 
         Timer timer = new Timer(true);
 
-        // 底部状态栏
+
         timer.scheduleAtFixedRate(new TimerTask() {
                                       @Override
                                       public void run() {
+                                          // 底部状态栏
                                           Platform.runLater(() -> {
                                                       hudgc.setFont(new Font("System", 14));
                                                       hudgc.drawImage(new Image("/images/hud_background.png"), 0, 0, 1024, 50);
@@ -176,25 +187,25 @@ public class GamefieldController implements Initializable {
                                                           hudgc.fillRoundRect(12, 12, model.getLocalPlayer().getShoot().getCurrentSpeed() * 100, 20, 5, 5);
                                                           // 速度条填充字
                                                           hudgc.setStroke(Color.BLACK);
-                                                          hudgc.strokeText(String.format("%d%%", (int) (model.getLocalPlayer().getShoot().getCurrentSpeed() * 100)), 49, 25);
+                                                          hudgc.strokeText(String.format("%d%%", (int) (model.getLocalPlayer().getShoot().getCurrentSpeed() * 100)), 49, 27);
 
                                                           // 玩家位置信息
                                                           if (model.getLocalPlayer().getPosition() != null) {
                                                               hudgc.setStroke(Color.ORANGE);
-                                                              hudgc.strokeText(String.format("%s: X: %d Y: %d",model.getLocalPlayer().getName(), model.getLocalPlayer().getPosition().getxCoord(),
+                                                              hudgc.strokeText(String.format("%s: X: %f Y: %f",model.getLocalPlayer().getName(), model.getLocalPlayer().getPosition().getxCoord(),
                                                                       model.getLocalPlayer().getPosition().getyCoord()), 420, 33);
                                                           }
 
                                                           // 现在操作的玩家信息
                                                           if (model.getLocalPlayer().getPosition() != null) {
                                                               hudgc.setStroke(Color.ORANGE);
-                                                              hudgc.strokeText(String.format("现在轮到：%s",model.getCurrentPlayer().getName()), 670, 33);
+                                                              hudgc.strokeText(String.format("现在轮到：%s",model.getCurrentPlayer().getName()), 730, 33);
                                                           }
 
 
                                                           // 角度信息
                                                           hudgc.setStroke(Color.ORANGE);
-                                                          hudgc.strokeText(String.format("角度: %.2f", model.getLocalPlayer().getShoot().getAngle()), 200, 33);
+                                                          hudgc.strokeText(String.format("角度: %.2f", model.getLocalPlayer().getShoot().getAngle()), 230, 33);
 
                                                           // 生命值
                                                           if (model.getLocalPlayer() != null && !model.getLocalPlayer().isDead()) {
@@ -212,27 +223,101 @@ public class GamefieldController implements Initializable {
                                               Platform.runLater(() -> {
                                                   drawBackground();
                                                   drawPlayers();
-                                                  drawRockets();
-                                                  drawForground();
+                                                  if (model.getRockets().size() > 0) {
+                                                      try {
+                                                          drawRockets();
+                                                      } catch (InterruptedException e) {
+                                                          e.printStackTrace();
+                                                      }
+                                                  }
+                                                  drawForeground();
                                               });
                                           });
                                           background.setDaemon(true);
                                           background.start();
+
                                       }
                                   }
                 , 100, 35);
+
+        Timer parabola = new Timer(true);
+
+        parabola.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if ( Rocket.isFLying ) {
+                    drawParabola();
+                }
+            }
+        } ,0,15);
+
+    }
+
+    synchronized public void drawParabola()  {
+
+        long startTime = System.currentTimeMillis();
+
+        long previous = 0;
+
+        long index = 0;
+
+        long endTime;
+
+        while ( index < tracks.size() ) {
+
+            if ( previous != index) {
+                System.out.println("时间过得真快。又过去了 100 ms");
+                previous = index;
+            }
+            currentPoint = tracks.get( (int)index );
+
+            System.out.println("我在画： " + currentPoint.getxCoord() + "  " + currentPoint.getyCoord());
+
+            paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+
+            endTime = System.currentTimeMillis();
+
+            index = (endTime - startTime)/600;
+        }
+
+        Rocket.isFLying = false;
+
+//        paragc.clearRect(0,0,1024, 576);
+
+
+
+//        paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+
+
     }
 
 
-    private void drawRockets() {
+
+
+    // 画出火箭
+    synchronized private void drawRockets() throws InterruptedException {
+
+        if ( model.getRockets().size() == 0 ) return;
+
         for (Rocket r : model.getRockets()) {
-            Explosion explosion = r.fly(model.getWorld());
+
+            System.out.println("我开始飞了！");
+
+            explosion = r.fly(model.getWorld());
+
+            System.out.println("我飞完了！");
+
+
+
+            // 如果没有爆炸发生，在原地画圆
             if (explosion == null) {
                 gc.setFill(Color.RED);
                 gc.fillOval(r.getPosition().getxCoord() - 3, r.getPosition().getyCoord() - 3, 6, 6);
             } else {
+                // 如果有爆炸发生
                 model.getRockets().remove(r);
                 explosion.calculateDamage(model.getPlayers());
+
                 model.getWorld().destroySurface(explosion);
 
                 double[] xCoord = new double[explosion.getBorder().length];
@@ -248,16 +333,21 @@ public class GamefieldController implements Initializable {
             }
             //Point destination = new Rocket(model.getLocalPlayer().getPosition(), speed, angle).calculateFlightPath(gc, model.getWorld());
         }
+
+
     }
 
+    // 画出玩家 worms
     private void drawPlayers() {
         GraphicsContext gcPl = canvas_player.getGraphicsContext2D();
+
         gcPl.clearRect(0, 0, canvas.getWidth(), canvas.getWidth());
+
         if (model != null && model.getPlayers() != null) {
             for (Player p : model.getPlayers()) {
                 if (p != null && p.getPosition() != null) {
-                    int x = p.getPosition().getxCoord();
-                    int y = p.getPosition().getyCoord();
+                    double x = p.getPosition().getxCoord();
+                    double y = p.getPosition().getyCoord();
 
                     if (!p.isDead()) {
                         if (p.getShoot().getAngle() < 90 && p.getShoot().getAngle() > -90) {
@@ -271,6 +361,20 @@ public class GamefieldController implements Initializable {
                 }
             }
         }
+
+
+//        if ( Rocket.isFLying) {
+//            for (Point currentPoint : tracks) {
+//
+//                System.out.println("我在画： " + currentPoint.getxCoord() + "  " + currentPoint.getyCoord());
+//
+//                gc.drawImage(new Image("/images/Canvas_parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+//
+//            }
+//            Rocket.isFLying = false;
+//        }
+
+
 
     }
 
@@ -300,7 +404,7 @@ public class GamefieldController implements Initializable {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    private void drawForground() {
+    private void drawForeground() {
         if (model.getOtherPlayers().size() <= 0 || model.getOtherPlayers().size() % 2 == 0) {
             gc.drawImage(new Image("/images/wait.png"), 384, 160, 256, 256);
             gc.setFont(new Font("System", 18));
@@ -348,9 +452,9 @@ public class GamefieldController implements Initializable {
             }
 
             if (model.getCurrentPlayer() != null && model.getCurrentPlayer().getPosition() != null) {
-                //Targetmarker
-                int x = model.getCurrentPlayer().getPosition().getxCoord();
-                int y = model.getCurrentPlayer().getPosition().getyCoord();
+                // 准星
+                double x = model.getCurrentPlayer().getPosition().getxCoord();
+                double y = model.getCurrentPlayer().getPosition().getyCoord();
 
                 double angle360 = 0;
                 double a = 0;
@@ -358,23 +462,28 @@ public class GamefieldController implements Initializable {
                 double curAngle = model.getCurrentPlayer().getShoot().getAngle();
 
                 if (curAngle > 0) {
-                    angle360 = curAngle;
-                    a = Math.sin(Math.toRadians(curAngle)) * 50;
-                    b = Math.cos(Math.toRadians(curAngle)) * 50;
+                    a = Math.sin(Math.toRadians(curAngle)) * 70;
+                    b = Math.cos(Math.toRadians(curAngle)) * 70;
                 } else if (curAngle < 0) {
-                    angle360 = (180 - (curAngle * -1)) + 180;
-                    a = Math.sin(Math.toRadians(angle360)) * 50;
-                    b = Math.cos(Math.toRadians(angle360)) * 50;
+                    angle360 = curAngle + 360;
+                    a = Math.sin(Math.toRadians(angle360)) * 70;
+                    b = Math.cos(Math.toRadians(angle360)) * 70;
                 }
                 else{
-                    b = 50;
+                    b = 70;
                 }
 //                gc.setFill(Color.RED);
 //                gc.fillOval(x + b - 4, y - a - 4, 8, 8);
 //                gc.setFill(Color.BROWN);
 //                gc.fillOval(x + b - 3, y - a - 3, 6, 6);
 //                if ( model.getCurrentPlayer().dir == Player.direction.left )
-                    gc.drawImage(new Image("/images/sight.png"), x + b - 10, y - a );
+                    double w  = 15;
+                    gc.drawImage(new Image("/images/sight_RD.png"), x + b, y - a + w - 35 ,w,w);
+                    gc.drawImage(new Image("/images/sight_RU.png"), x + b, y - a - 35 ,w,w);
+                    gc.drawImage(new Image("/images/sight_LU.png"), x + b - w, y - a - 35,w,w);
+                    gc.drawImage(new Image("/images/sight_LD.png"), x + b - w, y - a + w - 35,w,w);
+
+
 //                else
 //                    gc.drawImage(new Image("/images/sight.png"), x + b - 8, y - a );
 

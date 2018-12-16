@@ -7,32 +7,32 @@ import java.io.Serializable;
  */
 public class Point implements Serializable {
 
-    private int xCoord;
-    private int yCoord;
+    private double xCoord;
+    private double yCoord;
 
     // 是否被更新过
     private boolean changed = false;
 
     //指定坐标的构造器
-    public Point(int xCoord, int yCoord) {
+    public Point(double xCoord, double yCoord) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
     }
 
-    public int getxCoord() {
+    public double getxCoord() {
         return xCoord;
     }
 
-    public int getyCoord() {
+    public double getyCoord() {
         return yCoord;
     }
 
-    public void setxCoord(int xCoord) {
+    public void setxCoord(double xCoord) {
         this.xCoord = xCoord;
         changed = true;
     }
 
-    public void setyCoord(int yCoord) {
+    public void setyCoord(double yCoord) {
         if ( yCoord > 576 ) {
             this.yCoord=600;
         }

@@ -1,5 +1,7 @@
 package gameobjects;
 
+import client.ClientModel;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,8 +11,8 @@ import java.util.List;
  */
 public class Package implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = 1L;
     private GameInfo info;
     private List<Player> players;
     private Player currentPlayer;

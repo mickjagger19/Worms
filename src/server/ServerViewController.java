@@ -1,7 +1,7 @@
 package server;
 
+import client.Rocket;
 import gameobjects.Player;
-import gameobjects.Rocket;
 import gameobjects.Surface;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -65,7 +65,7 @@ public class ServerViewController implements Initializable {
                         }
                         if (model.getCurrentPlayer().getPosition() != null) {
                             hudgc.setFill(Color.ORANGE);
-                            hudgc.fillText(String.format("%s: X:%d Y:%d   ∠ %.2f°    ♥ %d", model.getCurrentPlayer().getName(), model.getCurrentPlayer().getPosition().getxCoord(),
+                            hudgc.fillText(String.format("%s: X:%f Y:%f   ∠ %.2f°    ♥ %d", model.getCurrentPlayer().getName(), model.getCurrentPlayer().getPosition().getxCoord(),
                                     model.getCurrentPlayer().getPosition().getyCoord(), model.getCurrentPlayer().getShoot().getAngle(), model.getCurrentPlayer().getHealth()), 250, 15);
                         }
                     }
@@ -109,8 +109,8 @@ public class ServerViewController implements Initializable {
 
         if (model.getCurrentPlayer() != null && model.getCurrentPlayer().getPosition() != null) {
             //Targetmarker
-            int x = model.getCurrentPlayer().getPosition().getxCoord();
-            int y = model.getCurrentPlayer().getPosition().getyCoord();
+            double x = model.getCurrentPlayer().getPosition().getxCoord();
+            double y = model.getCurrentPlayer().getPosition().getyCoord();
 
             double angle360 = 0;
             double a = 0;
@@ -202,8 +202,8 @@ public class ServerViewController implements Initializable {
         if (model != null) {
             for (Player p : model.getPlayers()) {
                 if (p.getPosition() != null) {
-                    int x = p.getPosition().getxCoord();
-                    int y = p.getPosition().getyCoord();
+                    double x = p.getPosition().getxCoord();
+                    double y = p.getPosition().getyCoord();
 
                     if (!p.isDead()) {
                         if (p.getShoot().getAngle() < 90 && p.getShoot().getAngle() > -90) {

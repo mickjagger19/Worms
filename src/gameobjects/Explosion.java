@@ -31,7 +31,7 @@ public class Explosion {
         // 计算 border 圆周上的每个点的坐标
         for (int i = GameWorld.EXPLOSION_POINTS - 1; i >= 0; i--) {
             border[i] = new Point((int) (point.getxCoord() + Math.cos(Math.toRadians(angle)) * GameWorld.EXPLOSION_RADIUS), (int) (point.getyCoord() + Math.sin(Math.toRadians(angle)) * GameWorld.EXPLOSION_RADIUS));
-            angle += (360 / GameWorld.EXPLOSION_POINTS);
+            angle += (360.0 / GameWorld.EXPLOSION_POINTS);
         }
     }
 

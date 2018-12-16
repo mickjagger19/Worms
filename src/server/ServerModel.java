@@ -1,6 +1,7 @@
 package server;
 
 //import com.sun.xml.internal.ws.api.message.Packet;
+import client.Rocket;
 import gameobjects.*;
 import gameobjects.Package;
 
@@ -55,14 +56,18 @@ public class ServerModel {
             @Override
             public void run() {
                 if (state.readyToPlay()) {
-                    applyPhysics();
+                    try {
+                        applyPhysics();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     if (currentShoot == null || currentShoot.isFired()) {
-                        if (currentShoot != null && currentShoot.isFired()) {
+                        if (currentShoot != null) {
                             double speed = currentShoot.getCurrentSpeed() * 90;
                             getRockets().add(new Rocket(getCurrentPlayer().getPosition(), speed, currentShoot.getAngle()));
                             currentShoot.setFired(false);
                         }
-                        //新的一轮
+                        //新的一轮, 新的发射
                         currentPlayer = state.nextPlayer();
                         currentShoot = new Shoot(0.5, 50, false);
                     }
@@ -70,12 +75,6 @@ public class ServerModel {
             }
         }, 50, 5);
         Thread serverConnection = new Thread(() -> {
-            /*state.join(new Player("Sepp"));
-            state.join(new Player("Mehmet"));
-            state.join(new Player("Franz"));
-            state.join(new Player("Gustav"));
-            state.join(new Player("Hans"));
-            state.join(new Player("Günther"));*/
 
             try {
                 ServerSocket socket = new ServerSocket(2387);
@@ -153,7 +152,7 @@ public class ServerModel {
         return serverIP;
     }
 
-    public void applyPhysics() {
+    public void applyPhysics() throws InterruptedException {
         for (Player p : getPlayers()) {
             p.applyPhysics(getWorld());
         }

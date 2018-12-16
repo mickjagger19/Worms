@@ -1,8 +1,9 @@
 package debug;
 
+import client.Rocket;
 import gameobjects.Explosion;
 import gameobjects.Point;
-import gameobjects.Rocket;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -37,14 +38,26 @@ public class TestController implements Initializable {
             @Override
             public void run() {
                 if (rocket1 != null) {
-                    Explosion explosion = rocket1.fly(gameWorld);
+                    Explosion explosion = null;
+                    try {
+                        explosion = rocket1.fly(gameWorld);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     if (explosion != null) {
                         rocket1 = null;
                         gameWorld.destroySurface(explosion);
                     }
                 }
                 if (rocket2 != null) {
-                    Explosion explosion = rocket2.fly(gameWorld);
+                    Explosion explosion = null;
+
+                    try {
+                        explosion = rocket2.fly(gameWorld);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     if (explosion != null) {
                         rocket2 = null;
                         gameWorld.destroySurface(explosion);
