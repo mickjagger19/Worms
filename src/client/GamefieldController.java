@@ -60,6 +60,8 @@ public class GamefieldController implements Initializable {
 
     public static int  drawTimes = 0;
 
+    private boolean rocketNeedFly = false;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -153,6 +155,7 @@ public class GamefieldController implements Initializable {
                         double speed = model.getCurrentPlayer().getShoot().getCurrentSpeed() * 90;
                         model.getRockets().add(new Rocket(model.getCurrentPlayer().getPosition(), speed, model.getCurrentPlayer().getShoot().getAngle()));
                         model.getLocalPlayer().getShoot().setFired(true);
+                        rocketNeedFly = true;
                         model.sendData();
                         speedUp = true;
                     }
@@ -223,7 +226,7 @@ public class GamefieldController implements Initializable {
                                               Platform.runLater(() -> {
                                                   drawBackground();
                                                   drawPlayers();
-                                                  if (model.getRockets().size() > 0) {
+                                                  if (model.getRockets().size() > 0 && rocketNeedFly ) {
                                                       try {
                                                           drawRockets();
                                                       } catch (InterruptedException e) {
@@ -257,7 +260,7 @@ public class GamefieldController implements Initializable {
 
         long startTime = System.currentTimeMillis();
 
-        long previous = 0;
+        long previous = -1;
 
         long index = 0;
 
@@ -268,30 +271,50 @@ public class GamefieldController implements Initializable {
             if ( previous != index) {
                 System.out.println("时间过得真快。又过去了 100 ms");
                 previous = index;
+                paragc.clearRect(0,0,1024,576);
+
+                currentPoint = tracks.get( (int)index );
+
+                System.out.println("我在画： " + currentPoint.getxCoord() + "  " + currentPoint.getyCoord());
+
+                paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+
             }
-            currentPoint = tracks.get( (int)index );
-
-            System.out.println("我在画： " + currentPoint.getxCoord() + "  " + currentPoint.getyCoord());
-
-            paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
-
             endTime = System.currentTimeMillis();
-
-            index = (endTime - startTime)/600;
+            index = (endTime - startTime)/9;
         }
+
+        paragc.clearRect(0,0,1024,576);
 
         Rocket.isFLying = false;
 
-//        paragc.clearRect(0,0,1024, 576);
+        Rocket r = model.getRockets().get(0);
 
 
+        // 如果没有爆炸发生，在原地画圆
+        if (explosion == null) {
+            gc.setFill(Color.RED);
+            gc.fillOval(r.getPosition().getxCoord() - 3, r.getPosition().getyCoord() - 3, 6, 6);
+        } else {
+            // 如果有爆炸发生
+            model.getRockets().remove(r);
+            explosion.calculateDamage(model.getPlayers());
 
-//        paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+            model.getWorld().destroySurface(explosion);
 
+            double[] xCoord = new double[explosion.getBorder().length];
+            double[] grasYCoord = new double[explosion.getBorder().length];
+
+            for (int i = 0; i < explosion.getBorder().length; i++) {
+                xCoord[i] = explosion.getBorder()[i].getxCoord();
+                grasYCoord[i] = explosion.getBorder()[i].getyCoord();
+            }
+
+            gc.setFill(Color.RED);
+            gc.fillPolygon(xCoord, grasYCoord, explosion.getBorder().length);
+        }
 
     }
-
-
 
 
     // 画出火箭
@@ -299,40 +322,41 @@ public class GamefieldController implements Initializable {
 
         if ( model.getRockets().size() == 0 ) return;
 
-        for (Rocket r : model.getRockets()) {
+        Rocket r  =  model.getRockets().get(0);
 
-            System.out.println("我开始飞了！");
+        System.out.println("我开始飞了！");
 
-            explosion = r.fly(model.getWorld());
+        explosion = r.fly(model.getWorld());
 
-            System.out.println("我飞完了！");
+        System.out.println("我飞完了！");
+
+        rocketNeedFly = false;
 
 
-
-            // 如果没有爆炸发生，在原地画圆
-            if (explosion == null) {
-                gc.setFill(Color.RED);
-                gc.fillOval(r.getPosition().getxCoord() - 3, r.getPosition().getyCoord() - 3, 6, 6);
-            } else {
-                // 如果有爆炸发生
-                model.getRockets().remove(r);
-                explosion.calculateDamage(model.getPlayers());
-
-                model.getWorld().destroySurface(explosion);
-
-                double[] xCoord = new double[explosion.getBorder().length];
-                double[] grasYCoord = new double[explosion.getBorder().length];
-
-                for (int i = 0; i < explosion.getBorder().length; i++) {
-                    xCoord[i] = explosion.getBorder()[i].getxCoord();
-                    grasYCoord[i] = explosion.getBorder()[i].getyCoord();
-                }
-
-                gc.setFill(Color.RED);
-                gc.fillPolygon(xCoord, grasYCoord, explosion.getBorder().length);
-            }
+//            // 如果没有爆炸发生，在原地画圆
+//            if (explosion == null) {
+//                gc.setFill(Color.RED);
+//                gc.fillOval(r.getPosition().getxCoord() - 3, r.getPosition().getyCoord() - 3, 6, 6);
+//            } else {
+//                // 如果有爆炸发生
+//                model.getRockets().remove(r);
+//                explosion.calculateDamage(model.getPlayers());
+//
+//                model.getWorld().destroySurface(explosion);
+//
+//                double[] xCoord = new double[explosion.getBorder().length];
+//                double[] grasYCoord = new double[explosion.getBorder().length];
+//
+//                for (int i = 0; i < explosion.getBorder().length; i++) {
+//                    xCoord[i] = explosion.getBorder()[i].getxCoord();
+//                    grasYCoord[i] = explosion.getBorder()[i].getyCoord();
+//                }
+//
+//                gc.setFill(Color.RED);
+//                gc.fillPolygon(xCoord, grasYCoord, explosion.getBorder().length);
+//            }
             //Point destination = new Rocket(model.getLocalPlayer().getPosition(), speed, angle).calculateFlightPath(gc, model.getWorld());
-        }
+
 
 
     }

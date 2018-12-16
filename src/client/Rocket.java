@@ -93,18 +93,12 @@ public class Rocket {
 
                 GamefieldController.tracks.add(new Point(currentX,currentY));
 
-//                GamefieldController.p.setxCoord(currentX);
-//                GamefieldController.p.setyCoord(currentY);
-
-                // 如果距离某个point的距离小于20，开始爆炸
-                if (getDistance(world.getNearestPoint(currentPoint), currentPoint) < 5) {
-
+                if (getDistance(world.getNearestPoint(currentPoint), currentPoint) < 10) {
                         isFLying = true;
                         System.out.println( "我return了，在目的地爆炸" );
                         System.out.println("总共画了" + GamefieldController.drawTimes + " 次 ");
                         GamefieldController.drawTimes = 0;
                         return explode(currentPoint);
-
                 }
 
 //                Thread.sleep((long)(2000*gapTime));
