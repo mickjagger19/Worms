@@ -28,9 +28,6 @@ public class Rocket {
 
     public static Point p;
 
-    @FXML
-    private Canvas canvas;
-
     public static boolean isFLying;
 
 
@@ -61,55 +58,54 @@ public class Rocket {
 
             //如果初始y坐标小于576，即处于地图范围内
             // 限制向下的速度，不得超过500
-            ySpeed = Math.max((ySpeed - GRAVITATIONAL_CONSTANT), -500);
+        ySpeed = Math.max((ySpeed - GRAVITATIONAL_CONSTANT), -500);
 
-            currentX = initialX;
-            currentY = initialY;
+        currentX = initialX;
+        currentY = initialY;
 
-            double gapTime = 0.01;
+        double gapTime = 0.01;
 
-            double disX = xSpeed * gapTime;
+        double disX = xSpeed * gapTime;
 
-            double disY;
+        double disY;
 
-            Point currentPoint = new Point(0, 0);
+        Point currentPoint = new Point(0, 0);
 
-            isFLying = false;
+        isFLying = false;
 
-            System.out.println( "我要开始循环了" );
+//        System.out.println( "我要开始循环了" );
 
-            GamefieldController.tracks = new LinkedList<Point>();
+        GamefieldController.tracks = new LinkedList<Point>();
 
             // 计算抛物线，用 currentPoint 存储当前的点
-            do {
+        do {
 
-                System.out.println( "我循环了一次" );
-                ySpeed = ySpeed - GRAVITATIONAL_CONSTANT*gapTime;
-                currentX = currentX + disX;
-                disY = ySpeed*gapTime;
-                currentY = currentY - disY;
-                currentPoint.setxCoord((int) currentX);
-                currentPoint.setyCoord((int) currentY);
+//            System.out.println( "我循环了一次" );
+            ySpeed = ySpeed - GRAVITATIONAL_CONSTANT*gapTime;
+            currentX = currentX + disX;
+            disY = ySpeed*gapTime;
+            currentY = currentY - disY;
+            currentPoint.setxCoord((int) currentX);
+            currentPoint.setyCoord((int) currentY);
 
-                GamefieldController.tracks.add(new Point(currentX,currentY));
+            GamefieldController.tracks.add(new Point(currentX,currentY));
 
-                if (getDistance(world.getNearestPoint(currentPoint), currentPoint) < 10) {
-                        isFLying = true;
-                        System.out.println( "我return了，在目的地爆炸" );
-                        System.out.println("总共画了" + GamefieldController.drawTimes + " 次 ");
-                        GamefieldController.drawTimes = 0;
-                        return explode(currentPoint);
+            if (getDistance(world.getNearestPoint(currentPoint), currentPoint) < 10) {
+                isFLying = true;
+                System.out.println( "我return了，在目的地爆炸" );
+                System.out.println("总共画了" + GamefieldController.drawTimes + " 次 ");
+                GamefieldController.drawTimes = 0;
+                return explode(currentPoint);
                 }
 
-//                Thread.sleep((long)(2000*gapTime));
+        } while ( currentY < 576 && currentY > 0 && currentX >0 && currentX < 1100);
 
-            } while ( currentY < 576 && currentY > 0 && currentX >0 && currentX < 1100);
 
-            System.out.println( "我结束循环了" );
+//        System.out.println( "我结束循环了" );
 
-            isFLying = true;
+        isFLying = true;
+        return null;
 
-            return null;
 
     }
 

@@ -13,7 +13,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  *
@@ -161,7 +160,7 @@ public class ServerModel {
             if (explosion != null) {
                 getRockets().remove(r);
                 explosion.calculateDamage(getPlayers());
-                getWorld().destroySurface(explosion);
+//                getWorld().destroySurface(explosion);
             }
         }
     }

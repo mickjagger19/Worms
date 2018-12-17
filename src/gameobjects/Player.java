@@ -196,8 +196,8 @@ public class Player implements Serializable {
      * 治疗，返回正确的health值
      */
     public void heal(int hp) {
-        if (hp < 0)
-            throw new IllegalArgumentException("Der Spieler wird nicht geheilt!");
+//        if (hp < 0)
+//            throw new IllegalArgumentException("Der Spieler wird nicht geheilt!");
 
         if (hp >= 100) {
             health = 100;

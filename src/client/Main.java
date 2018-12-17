@@ -25,7 +25,7 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("/client/view/Mainform.fxml"));
         primaryStage.setTitle("Worms");
-        primaryStage.setScene(new Scene(root, 400, 500));
+        primaryStage.setScene(new Scene(root, 400, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
     }

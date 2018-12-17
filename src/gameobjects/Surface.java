@@ -5,10 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * 该类代表地图中的所有多边形
  * 一个地图由很多个 Surface 对象组合而成
- *
  */
 public class Surface implements Serializable {
 

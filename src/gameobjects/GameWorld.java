@@ -14,7 +14,7 @@ public class GameWorld implements Serializable {
     public final static int EXPECTED_VARIATIONS = 10;    // 预测的地形变化数量
     public final static int MAX_VARIATION = 1000;        // 最大地形变化数量
     public final static int MIN_VARIATION_YWIDTH = 100;   // 地形变化的最小宽度
-    public final static int EXPLOSION_RADIUS = 25;       // 爆炸范围
+    public final static int EXPLOSION_RADIUS = 45;       // 爆炸范围
     public final static int EXPLOSION_POINTS = 60;       // 爆炸中包含的点的数量，该值可以控制爆炸的精细度
 
     private List<Surface> gameWorld;    // 游戏中所有表面的列表

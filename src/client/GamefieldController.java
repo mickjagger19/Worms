@@ -269,19 +269,19 @@ public class GamefieldController implements Initializable {
         while ( index < tracks.size() ) {
 
             if ( previous != index) {
-                System.out.println("时间过得真快。又过去了 100 ms");
+//                System.out.println("时间过得真快。又过去了 100 ms");
                 previous = index;
                 paragc.clearRect(0,0,1024,576);
 
                 currentPoint = tracks.get( (int)index );
 
-                System.out.println("我在画： " + currentPoint.getxCoord() + "  " + currentPoint.getyCoord());
+//                System.out.println("我在画： " + currentPoint.getxCoord() + "  " + currentPoint.getyCoord());
 
                 paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
 
             }
             endTime = System.currentTimeMillis();
-            index = (endTime - startTime)/9;
+            index = (endTime - startTime)/5;
         }
 
         paragc.clearRect(0,0,1024,576);
@@ -300,7 +300,7 @@ public class GamefieldController implements Initializable {
             model.getRockets().remove(r);
             explosion.calculateDamage(model.getPlayers());
 
-            model.getWorld().destroySurface(explosion);
+//            model.getWorld().destroySurface(explosion);
 
             double[] xCoord = new double[explosion.getBorder().length];
             double[] grasYCoord = new double[explosion.getBorder().length];
@@ -324,11 +324,11 @@ public class GamefieldController implements Initializable {
 
         Rocket r  =  model.getRockets().get(0);
 
-        System.out.println("我开始飞了！");
+//        System.out.println("我开始飞了！");
 
         explosion = r.fly(model.getWorld());
 
-        System.out.println("我飞完了！");
+//        System.out.println("我飞完了！");
 
         rocketNeedFly = false;
 
@@ -418,7 +418,9 @@ public class GamefieldController implements Initializable {
 
                 // 土地的颜色
                 for (int i = 0; i < ClientModel.getInstance().getWorld().getGameWorld().size(); i++) {
-                    gcgf.setFill(Color.SANDYBROWN);
+//                    gcgf.setFill(Color.SANDYBROWN);
+                    gcgf.setFill(new Color(0.451,0.290,0.0785,1));
+
                     gcgf.fillPolygon(ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getyCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords().length);
