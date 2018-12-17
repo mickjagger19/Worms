@@ -19,9 +19,9 @@
          <children>
             <StackPane prefHeight="150.0" prefWidth="200.0">
                <children>
-                  <ImageView fitHeight="576.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="backgroundImage" fitHeight="576.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../images/background.png" />
+                        <Image url="@../../images/background1.png" />
                      </image>
                   </ImageView>
                   <Canvas fx:id="canvas_gamefield" focusTraversable="true" height="576.0" width="1024.0" />

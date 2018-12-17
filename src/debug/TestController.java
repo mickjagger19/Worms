@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import gameobjects.GameWorld;
@@ -18,6 +19,7 @@ import java.util.*;
 public class TestController implements Initializable {
 
 
+    public ImageView backgroundImage;
     @FXML
     private Canvas canvas;
 
@@ -96,8 +98,8 @@ public class TestController implements Initializable {
     private void drawSurface() {
 
 
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+//        gc.setFill(Color.WHITE);
+//        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
 //        for (Surface surface : gameWorld.getGameWorld()) {
 //            gc.setFill(Color.GREEN);
@@ -115,6 +117,7 @@ public class TestController implements Initializable {
 
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
+
         //gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         if (rocket1 != null) {

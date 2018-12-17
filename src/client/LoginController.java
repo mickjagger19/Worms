@@ -5,10 +5,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,6 +39,9 @@ public class LoginController implements Initializable {
     public Button bt_right;
     public Button bt_login;
     public ImageView iv_skin;
+    public MenuItem bk_1,bk_2,bk_3,bk_4,bk_5;
+    public MenuButton menubutton;
+    public ImageView thumbimage;
 
     private int skinID = 0;
 
@@ -67,6 +71,39 @@ public class LoginController implements Initializable {
                 connect(null);
             }
         });
+
+        bk_1.setOnAction((ActionEvent t) ->{
+            thumbimage.setImage(new Image("images/thumbview1.png"));
+            GamefieldController.background_num = 1;
+            menubutton.setText("Beach");
+        });
+
+        bk_2.setOnAction((ActionEvent t) ->{
+            thumbimage.setImage(new Image("images/thumbview2.png"));
+            GamefieldController.background_num = 2;
+            menubutton.setText("Sewer");
+
+        });
+
+        bk_3.setOnAction((ActionEvent t) ->{
+            thumbimage.setImage(new Image("images/thumbview3.png"));
+            GamefieldController.background_num = 3;
+            menubutton.setText("Spooky");
+        });
+
+        bk_4.setOnAction((ActionEvent t) ->{
+            thumbimage.setImage(new Image("images/thumbview4.png"));
+            GamefieldController.background_num = 4;
+            menubutton.setText("Farm");
+        });
+
+        bk_5.setOnAction((ActionEvent t) ->{
+            thumbimage.setImage(new Image("images/thumbview5.png"));
+            GamefieldController.background_num = 5;
+            menubutton.setText("Junkyard");
+        });
+
+
     }
 
     public void changeSkin(KeyEvent event) {
@@ -122,7 +159,6 @@ public class LoginController implements Initializable {
         ClientModel.getInstance().setLocalPlayer(new Player(tf_playername.getText(), skinID));
         ClientModel.getInstance().setServerIP(tf_serverip.getText());
 
-
         Stage stage = new Stage();
         Parent root = null;
         try {
@@ -130,8 +166,7 @@ public class LoginController implements Initializable {
             stage.setTitle("WORMS - " + tf_serverip.getText() + " [" + tf_playername.getText() + "]");
             stage.setScene(new Scene(root));
             stage.centerOnScreen();
-            //stage.initModality(Modality.WINDOW_MODAL);
-            //stage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
+
             stage.setResizable(true);
             stage.show();
         } catch (IOException e) {
@@ -179,4 +214,5 @@ public class LoginController implements Initializable {
         }
         iv_skin.setImage(new Image(String.format("/images/worms/Rworm%d.png", skinID)));
     }
+
 }

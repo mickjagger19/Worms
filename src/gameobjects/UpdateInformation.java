@@ -8,5 +8,6 @@ import java.io.Serializable;
 public enum UpdateInformation implements Serializable{
     World_a_Player,
     World,
-    Player
+    Player,
+    flyingDone
 }

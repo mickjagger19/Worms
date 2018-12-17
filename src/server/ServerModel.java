@@ -36,6 +36,9 @@ public class ServerModel {
     private GameState state;
 
 
+    public static volatile boolean flyDone = false;
+
+
     private ServerModel() {
         try {
             serverIP = Inet4Address.getLocalHost().getHostAddress();
@@ -96,13 +99,18 @@ public class ServerModel {
                                     //TODO
                                     // 根据 receivedP 的类型，确定数据包的具体内容
                                     if (receivedP.equals(UpdateInformation.Player)) {
+                                        System.out.println("接收 Player");
                                         out.writeObject(new Package(state.getInfo(), changedPlayers(), null, currentPlayer));
                                     } else if (receivedP.equals(UpdateInformation.World)) {
+                                        System.out.println("接收 World");
                                         out.writeObject(new Package(state.getInfo(), null, world, currentPlayer));
                                     } else if (receivedP.equals(UpdateInformation.World_a_Player)) {
+                                        System.out.println("接收 World_a_Player");
                                         out.writeObject(new Package(state.getInfo(), changedPlayers(), world, currentPlayer));
                                     }
+
                                 } else if (receivedP instanceof Player) {
+                                    System.out.println("接收 玩家信息");
                                     // 如果是玩家信息的数据包
                                     Player pCL = (Player) receivedP;
                                     if (players.contains(pCL)) {
@@ -111,20 +119,22 @@ public class ServerModel {
                                             currentPlayer = pCL;
                                             currentShoot = pCL.getShoot();
                                             players.set(players.indexOf(pCL), pCL);
-                                            //System.out.println(players.get(players.indexOf(pCL))); //Gesendeter Spieler
                                         }
                                     } else {
                                         System.out.println("'"+pCL.getName() + "' 进入游戏");
                                         state.join(pCL);
                                     }
-                                } else {
+                                }  else if ( receivedP instanceof String) {
+                                    System.out.println("接收  \"true\" ");
+                                    flyDone = true;
+                                }
+
+                                else {
                                     System.out.println("来自客户端的无法识别的消息");
                                 }
                             }
-                        } catch (IOException ex) {
+                        } catch (IOException | ClassNotFoundException ex) {
                             ex.printStackTrace();
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
                         }
                     });
                     clientThread.setDaemon(true);
@@ -138,13 +148,6 @@ public class ServerModel {
         serverConnection.setName("ServerConnection-Thread");
         serverConnection.start();
 
-        /*Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                players.get(new Random().nextInt(players.size())).removeHealth(100);
-            }
-        },100,3000);*/
     }
 
     public String getServerIP() {
@@ -155,14 +158,20 @@ public class ServerModel {
         for (Player p : getPlayers()) {
             p.applyPhysics(getWorld());
         }
-        for (Rocket r : rockets) {
-            Explosion explosion = r.fly(getWorld());
-            if (explosion != null) {
-                getRockets().remove(r);
-                explosion.calculateDamage(getPlayers());
-//                getWorld().destroySurface(explosion);
-            }
+
+        if (!flyDone)  return;
+        System.out.println("进入爆炸");
+        Rocket r =rockets.get(0);
+        Explosion explosion = r.fly(getWorld());
+        if (explosion != null) {
+            System.out.println("正在计算爆炸效果");
+            getRockets().remove(r);
+            explosion.calculateDamage(getPlayers());
+            getWorld().destroySurface(explosion);
+
         }
+
+        flyDone = false;
     }
 
     public List<Rocket> getRockets() {

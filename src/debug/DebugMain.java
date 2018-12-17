@@ -10,6 +10,7 @@ public class DebugMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
         Parent root = FXMLLoader.load(getClass().getResource("/debug/view/Test.fxml"));
         primaryStage.setTitle("Worms");
         primaryStage.setScene(new Scene(root));

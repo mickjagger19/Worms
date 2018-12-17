@@ -8,13 +8,19 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.util.*;
 
@@ -29,6 +35,8 @@ public class GamefieldController implements Initializable {
     @FXML
     public Canvas canvas_gamefield;
     public Canvas canvas_player;
+
+    public ImageView backgroundImage;
     @FXML
     private Canvas canvas;
     @FXML
@@ -40,22 +48,18 @@ public class GamefieldController implements Initializable {
     @FXML
     public AnchorPane pane;
 
-
-
-
     public static Point currentPoint = new Point(0,0);
 
     public static List<Point> tracks;
 
+    public static int background_num = 1;
 
     private static Explosion explosion;
     private GraphicsContext gc;
     private GraphicsContext hudgc;
     private GraphicsContext paragc;
 
-
     private ClientModel model;
-
     private boolean speedUp = true;
 
     public static int  drawTimes = 0;
@@ -65,6 +69,9 @@ public class GamefieldController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+
+        backgroundImage.setImage(new Image("/images/background" + background_num + ".png"));
 
         model = ClientModel.getInstance();
 
@@ -76,23 +83,18 @@ public class GamefieldController implements Initializable {
 
 
         pane.setOnKeyPressed(event -> {
-//            System.out.println("current" + model.getCurrentPlayer().getName());
-//            System.out.println("local" + model.getLocalPlayer();.getName());
+
             if (model.getCurrentPlayer() != null && model.getCurrentPlayer().equals(model.getLocalPlayer())
             ) {
                     if (event.getCode() == KeyCode.SPACE) {
-                        System.out.println("检测到空格键");
                         double newSpeed = model.getCurrentPlayer().getShoot().getCurrentSpeed();
                         if ( speedUp ) newSpeed += 0.03;
                         else newSpeed -= 0.03;
-
-
                         if ( newSpeed > 1 ) { newSpeed  = 2 - newSpeed; speedUp = false;}
                         else if ( newSpeed < 0 ) { newSpeed  = -newSpeed; speedUp = true;}
                         model.getCurrentPlayer().getShoot().setCurrentSpeed(newSpeed);
                     }
                     if (event.getCode() == KeyCode.UP) {
-                        System.out.println("检测到向上");
                         double currentAngle = model.getLocalPlayer().getShoot().getAngle();
                         if ( model.getLocalPlayer().dir == Player.direction.left ) {
                             if ( currentAngle >= 0 )
@@ -106,7 +108,6 @@ public class GamefieldController implements Initializable {
                     }
                     if (event.getCode() == KeyCode.DOWN) {
 
-                        System.out.println("检测到向下");
                         double currentAngle = model.getLocalPlayer().getShoot().getAngle();
                         if ( model.getLocalPlayer().dir == Player.direction.left ) {
                             if ( currentAngle < 0 )
@@ -117,11 +118,9 @@ public class GamefieldController implements Initializable {
                         }else
                             model.getLocalPlayer().getShoot().setAngle( currentAngle > -88 ? currentAngle - 2 : -90);
 
-//                        model.getLocalPlayer().getShoot().setAngle(model.getLocalPlayer().getShoot().getAngle() <= -179 ? 180 :
-//                                model.getLocalPlayer().getShoot().getAngle() == 0 ? -1 : model.getLocalPlayer().getShoot().getAngle() - 1);
                     }
                     if (event.getCode() == KeyCode.LEFT) {
-                        System.out.println("检测到向左");
+//                        System.out.println("检测到向左");
                         model.getLocalPlayer().movePlayer(-2);
                         model.getLocalPlayer().previousDir =  model.getLocalPlayer().dir;
                         model.getLocalPlayer().dir = Player.direction.left;
@@ -132,7 +131,7 @@ public class GamefieldController implements Initializable {
                         }
                     }
                     if (event.getCode() == KeyCode.RIGHT) {
-                        System.out.println("检测到向右");
+//                        System.out.println("检测到向右");
                         model.getLocalPlayer().movePlayer(2);
                         model.getLocalPlayer().previousDir =  model.getLocalPlayer().dir;
                         model.getLocalPlayer().dir = Player.direction.right;
@@ -143,7 +142,6 @@ public class GamefieldController implements Initializable {
                         }
                     }
                     model.sendData();
-
             }
         });
 
@@ -165,7 +163,6 @@ public class GamefieldController implements Initializable {
 
         Timer timer = new Timer(true);
 
-
         timer.scheduleAtFixedRate(new TimerTask() {
                                       @Override
                                       public void run() {
@@ -173,8 +170,6 @@ public class GamefieldController implements Initializable {
                                           Platform.runLater(() -> {
                                                       hudgc.setFont(new Font("System", 14));
                                                       hudgc.drawImage(new Image("/images/hud_background.png"), 0, 0, 1024, 50);
-
-
 
                                                       hudgc.setFill(Color.WHITE);
 
@@ -281,7 +276,7 @@ public class GamefieldController implements Initializable {
 
             }
             endTime = System.currentTimeMillis();
-            index = (endTime - startTime)/5;
+            index = (endTime - startTime)/3;
         }
 
         paragc.clearRect(0,0,1024,576);
@@ -291,16 +286,34 @@ public class GamefieldController implements Initializable {
         Rocket r = model.getRockets().get(0);
 
 
+        Socket csocket = null;
+        try {
+                ClientModel client = ClientModel.getInstance();
+                // 新建
+                csocket = new Socket();
+                // 连接
+                csocket.connect(new InetSocketAddress(client.getServerIP(), 2387), 10000);
+                ObjectOutputStream out = new ObjectOutputStream(csocket.getOutputStream());
+
+                out.writeObject("true");
+                System.out.println("发送完毕");
+                csocket.close();
+        } catch (IOException ex) {
+                ex.printStackTrace();
+        }
+
+
+
         // 如果没有爆炸发生，在原地画圆
         if (explosion == null) {
-            gc.setFill(Color.RED);
-            gc.fillOval(r.getPosition().getxCoord() - 3, r.getPosition().getyCoord() - 3, 6, 6);
+//            gc.setFill(Color.RED);
+//            gc.fillOval(r.getPosition().getxCoord() - 3, r.getPosition().getyCoord() - 3, 6, 6);
         } else {
+            System.out.println("发生爆炸");
             // 如果有爆炸发生
             model.getRockets().remove(r);
             explosion.calculateDamage(model.getPlayers());
 
-//            model.getWorld().destroySurface(explosion);
 
             double[] xCoord = new double[explosion.getBorder().length];
             double[] grasYCoord = new double[explosion.getBorder().length];
@@ -312,6 +325,7 @@ public class GamefieldController implements Initializable {
 
             gc.setFill(Color.RED);
             gc.fillPolygon(xCoord, grasYCoord, explosion.getBorder().length);
+            model.getWorld().destroySurface(explosion);
         }
 
     }
@@ -324,14 +338,9 @@ public class GamefieldController implements Initializable {
 
         Rocket r  =  model.getRockets().get(0);
 
-//        System.out.println("我开始飞了！");
-
         explosion = r.fly(model.getWorld());
 
-//        System.out.println("我飞完了！");
-
         rocketNeedFly = false;
-
 
 //            // 如果没有爆炸发生，在原地画圆
 //            if (explosion == null) {
@@ -411,16 +420,18 @@ public class GamefieldController implements Initializable {
 
                 // 土地表层颜色
                 for (Surface surface : ClientModel.getInstance().getWorld().getGameWorld()) {
-                    gcgf.setStroke(Color.GREEN);
-                    gcgf.setLineWidth(5);
+                    gcgf.setStroke(Color.LAWNGREEN);
+                    gcgf.setLineWidth(4);
                     gcgf.strokePolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
                 }
 
                 // 土地的颜色
                 for (int i = 0; i < ClientModel.getInstance().getWorld().getGameWorld().size(); i++) {
 //                    gcgf.setFill(Color.SANDYBROWN);
-                    gcgf.setFill(new Color(0.451,0.290,0.0785,1));
 
+                    gcgf.setFill(new Color(0.451,0.290,0.0785,1));
+                    gcgf.setFill(new ImagePattern(new Image("/images/EarthPattern.png")));
+//                    gcgf.
                     gcgf.fillPolygon(ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getyCoords(),
                             ClientModel.getInstance().getWorld().getGameWorld().get(i).getxCoords().length);

@@ -236,6 +236,8 @@ public class GameWorld implements Serializable {
 
         gameWorld.addAll(newSurfaces);
         worldChanged = true;
+
+        System.out.println("服务器 destroy surface 完毕");
     }
 
     /**

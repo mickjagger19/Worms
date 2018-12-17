@@ -73,7 +73,6 @@ public class ClientModel extends Observable {
                                 // 只更新 player
                                 out.writeObject(UpdateInformation.Player);
                             }
-
                             ObjectInputStream in = new ObjectInputStream(csocket.getInputStream());
 
                             // 读取 server 发往 client 的数据
@@ -83,34 +82,28 @@ public class ClientModel extends Observable {
                                 world = p.getWorld();
                             if (p.getCurrentPlayer() != null)
                                 currentPlayer = p.getCurrentPlayer();
+
                             otherPlayers = p.getPlayers();
 
-                            // 发送 localPlayer 数据
+                            // 根据接收的数据，进行相应处理
                             if (otherPlayers != null && otherPlayers.size() > 0 && otherPlayers.contains(localPlayer)) {
-
                                 localPlayer = otherPlayers.get(otherPlayers.indexOf(localPlayer));
-
-                                // otherPlayers - localPlayer
                                 otherPlayers.remove(localPlayer);
-
-//                                if(localPlayer.equals(currentPlayer)){
-//                                    csocket.close();
-//                                    sendData();
-//                                }
                             } else {
                                 csocket.close();
                                 sendData();
                             }
+
+
+
                         }
-                        //System.out.println("[Client] 接收数据.");
+
                     }
                 } catch (ConnectException e) {
                     e.printStackTrace();
                     System.out.println("[C] 连接失败！");
-                } catch (IOException ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                 }
                 worldRequest--;
                 if(worldRequest<0)
