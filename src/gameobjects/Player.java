@@ -22,16 +22,13 @@ public class Player implements Serializable {
     private int health;
 
     private Shoot ownShoot;
-    private boolean isCurrent;
     private String team;
 
     private int wormSkin = 0;
 
-    private boolean changed = false;
-
     public enum direction{
         left,
-        right;
+        right
     }
 
     public direction dir = direction.right;
@@ -61,19 +58,20 @@ public class Player implements Serializable {
         return position;
     }
 
-    public void setPosition(Point position) {
+    void setPosition(Point position) {
         this.position = position;
     }
 
     public void applyPhysics(GameWorld gameWorld) {
         if (position != null) {
 
+            // 游戏开始时，下落
             if (getDistance(gameWorld.getNearestPoint(position), position) > 3)
-                //向上移动5个单位
+                //向下移动5个单位
                 position.setyCoord(position.getyCoord() + 5);
 
             if (position.getyCoord() > 576)
-                //超出地图，判定为死亡，扣除100点生命值
+                //超出地图底部，判定为死亡，扣除100点生命值
                 removeHealth(100);
 
             if (!isDead() && gameWorld.containsPoint(position)) {
@@ -81,7 +79,7 @@ public class Player implements Serializable {
                 point.setyCoord(point.getyCoord() - 2);
                 position = point;
             }
-            changed = true;
+//            changed = true;
         }
     }
 
@@ -104,7 +102,7 @@ public class Player implements Serializable {
      * 计算受伤害后的 health 值
      * @param removedHealth 将要扣除的 health 值
      */
-    public void removeHealth(int removedHealth) {
+    void removeHealth(int removedHealth) {
         if (health > 0) {
             if (health-removedHealth < 0) {
                 health = 0;
@@ -112,12 +110,9 @@ public class Player implements Serializable {
             else {
                 this.health = health - removedHealth;
             }
-            changed = true;
+//            changed = true;
         }
-        else {
-            changed = false;
-        }
-
+        //            changed = false;
     }
 
     public boolean isDead() {
@@ -147,15 +142,11 @@ public class Player implements Serializable {
                 '}';
     }
 
-    public boolean isCurrent() {
-        return isCurrent;
+    void setCurrent() {
+        boolean isCurrent = true;
     }
 
-    public void setCurrent(boolean current) {
-        isCurrent = current;
-    }
-
-    public void setTeam(String team) {
+    void setTeam(String team) {
         this.team = team;
     }
 
@@ -170,12 +161,12 @@ public class Player implements Serializable {
     /**
      * @param wormSkin 设置worm的皮肤
      */
-    public void setWormSkin(int wormSkin) {
+    private void setWormSkin(int wormSkin) {
         if (wormSkin == 100) {
             this.wormSkin = 100;
         }
         else if (wormSkin >= WORM_SKINS)
-            throw new IllegalArgumentException(String.format("指定的皮肤序号 [%d] 超出上限", WORM_SKINS, wormSkin));
+            throw new IllegalArgumentException(String.format("指定的皮肤序号 [%d] 超出上限",wormSkin));
         else if (wormSkin < 0)
             throw new IllegalArgumentException(String.format("指定的皮肤序号 [%d] 为负数", wormSkin));
 
@@ -195,10 +186,7 @@ public class Player implements Serializable {
     /**
      * 治疗，返回正确的health值
      */
-    public void heal(int hp) {
-//        if (hp < 0)
-//            throw new IllegalArgumentException("Der Spieler wird nicht geheilt!");
-
+    void heal(int hp) {
         if (hp >= 100) {
             health = 100;
         } else {

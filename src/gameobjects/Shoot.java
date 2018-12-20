@@ -11,14 +11,12 @@ import java.io.Serializable;
 public class Shoot implements Serializable{
 
     //角度
-    private double angle = 10;
+    private double angle;
 
     // 速度
-    private double currentSpeed = 0.5;
+    private double currentSpeed;
 
-    private boolean fired = false;
-
-    private boolean changed = false;
+    private boolean fired;
 
     public Shoot(double currentSpeed, double angle, boolean fired) {
         this.currentSpeed = currentSpeed;
@@ -40,17 +38,14 @@ public class Shoot implements Serializable{
 
     public void setAngle(double angle) {
         this.angle = angle;
-        changed = true;
     }
 
     public void setCurrentSpeed(double currentSpeed) {
         this.currentSpeed = currentSpeed;
-        changed = true;
     }
 
     public void setFired(boolean fired) {
         this.fired = fired;
-        changed = true;
     }
 
     @Override
@@ -62,11 +57,11 @@ public class Shoot implements Serializable{
                 '}';
     }
 
-    public boolean hasChanged() {
-        return changed;
-    }
+//    public boolean hasChanged() {
+//        return changed;
+//    }
 
-    public void setChanged(boolean changed) {
-        this.changed = changed;
-    }
+//    public void setChanged(boolean changed) {
+//        this.changed = changed;
+//    }
 }

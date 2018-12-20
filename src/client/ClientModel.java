@@ -2,17 +2,12 @@ package client;
 
 import gameobjects.*;
 import gameobjects.Package;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.*;
 
 /**
@@ -21,7 +16,7 @@ import java.util.*;
  * 其他用户注册后，该类被替换
  * 使用了 socket
  */
-public class ClientModel extends Observable {
+public class ClientModel {
 
     private static ClientModel singelton;
 
@@ -39,7 +34,7 @@ public class ClientModel extends Observable {
     private List<Rocket> rockets;
     private GameWorld world;
 
-    int worldRequest = 32;
+    private int worldRequest = 32;
 
 
     private ClientModel() {
@@ -51,7 +46,7 @@ public class ClientModel extends Observable {
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Socket csocket = null;
+                Socket csocket;
                 try {
                     if (getServerIP() != null) {
                         // 新建 socket
@@ -113,67 +108,67 @@ public class ClientModel extends Observable {
 
     }
 
-    public Player getLocalPlayer() {
+    Player getLocalPlayer() {
         return localPlayer;
     }
 
-    public void setLocalPlayer(Player player) {
+    void setLocalPlayer(Player player) {
         this.localPlayer = player;
     }
 
     /**
      * @return otherPlayers - localPlayer
      */
-    public synchronized List<Player> getOtherPlayers() {
+    synchronized List<Player> getOtherPlayers() {
         ArrayList<Player> pl = new ArrayList<>(otherPlayers);
         pl.remove(localPlayer);
         return pl;
     }
 
-    public String getServerIP() {
+    String getServerIP() {
         return serverIP;
     }
 
-    public void setServerIP(String serverIP) {
+    void setServerIP(String serverIP) {
         this.serverIP = serverIP;
     }
 
 
     // 只在第一次调用时新建 clientModel
     // 之后调用， 都返回该静态变量
-    public static ClientModel getInstance() {
+    static ClientModel getInstance() {
         if (singelton == null)
             singelton = new ClientModel();
         return singelton;
     }
 
-    public List<Rocket> getRockets() {
+    List<Rocket> getRockets() {
         return rockets;
     }
 
-    public GameWorld getWorld() {
+    GameWorld getWorld() {
         return world;
     }
 
-    public List<Player> getPlayers() {
+    List<Player> getPlayers() {
         List<Player> players = new ArrayList<>(getOtherPlayers());
         players.add(getLocalPlayer());
         return players;
     }
 
-    public Player getCurrentPlayer() {
+    Player getCurrentPlayer() {
         return currentPlayer;
     }
 
     /**
      * 发送数据
      */
-    public void sendData() {
+    void sendData() {
         Thread t = new Thread(() -> {
-            Socket csocket = null;
+
             try {
                 // 新建
-                csocket = new Socket();
+                Socket csocket = new Socket();
                 // 连接
                 csocket.connect(new InetSocketAddress(getServerIP(), 2387), 10000);
                 ObjectOutputStream out = new ObjectOutputStream(csocket.getOutputStream());

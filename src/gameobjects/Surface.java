@@ -1,7 +1,6 @@
 package gameobjects;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,13 +19,13 @@ public class Surface implements Serializable {
     // 指定边界的构造器
     public Surface(List<Point> border) {
         this.border = border;
-        refreshValues();
+        rearrangePoints();
     }
 
     // 设置 Surface 的边界为指定边界
-    public void setBorder(List<Point> border) {
+    void setBorder(List<Point> border) {
         this.border = border;
-        refreshValues();
+        rearrangePoints();
     }
 
 
@@ -35,9 +34,9 @@ public class Surface implements Serializable {
     }
 
     /**
-     * 更新 Surface 中的所有点的坐标
+     * border更改后，根据新的border, 更新 Surface 中的所有点的坐标
      */
-    private void refreshValues() {
+    public void rearrangePoints() {
         xCoords = new double[border.size()];
         yCoords = new double[border.size()];
 
@@ -58,7 +57,7 @@ public class Surface implements Serializable {
     /**
      * @return 某个点是否在 Surface 中
      */
-    public boolean contains(Point point) {
+    boolean contains(Point point) {
         int i;
         int j;
         boolean result = false;
@@ -79,10 +78,9 @@ public class Surface implements Serializable {
     }
 
     /**
-     *
      * @return 该 Surface 的边界中离指定点最近的点
      */
-    public int getIndexofNearestPoint(Point point) {
+    int getIndexofNearestPoint(Point point) {
 
         double smallestDistance = Double.MAX_VALUE;
         int index = 0;

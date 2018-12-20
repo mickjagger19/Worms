@@ -17,7 +17,7 @@ public class GameState implements Serializable {
     private List<Player> players;
     private GameInfo info;
 
-    int round = -1;
+    private int round = -1;
 
     public GameState(List<Player> players) {
         this.players = players;
@@ -36,7 +36,7 @@ public class GameState implements Serializable {
 
             Random random = new Random();
             int x = random.nextInt(1000) + 20;
-            newPlayer.setPosition(new Point(x, 20));
+            newPlayer.setPosition(new Point(x, 0));
 
             if (teamA.size() <= teamB.size()) {
                 newPlayer.setTeam("A");
@@ -49,7 +49,7 @@ public class GameState implements Serializable {
         }
     }
 
-    public void newRound() {
+    private void newRound() {
         round++;
         left_TeamA = new LinkedList<>(teamA.values());
         left_TeamB = new LinkedList<>(teamB.values());
@@ -74,7 +74,7 @@ public class GameState implements Serializable {
     }
 
     public Player nextPlayer() {
-        Player next = null;
+        Player next;
         if (left_TeamA == null || left_TeamB == null)
             newRound();
 
@@ -115,24 +115,15 @@ public class GameState implements Serializable {
         } else if (left_TeamA.size() > left_TeamB.size()) {
             next = left_TeamA.get(0);
             left_TeamA.remove(0);
-        } else if (left_TeamA.size() < left_TeamB.size()) {
+        } else {
+            left_TeamA.size();
+            left_TeamB.size();
             next = left_TeamB.get(0);
             left_TeamB.remove(0);
         }
 
-        next.setCurrent(true);
+        next.setCurrent();
         return next;
-    }
-
-    public void printTeams() {
-        System.out.println("TeamA:");
-        for (Player p : teamA.values()) {
-            System.out.println("\t" + p.getName());
-        }
-        System.out.println("TeamB:");
-        for (Player p : teamB.values()) {
-            System.out.println("\t" + p.getName());
-        }
     }
 
     private List<Player> getDeadPlayer(Collection<Player> plyrs) {
@@ -146,24 +137,24 @@ public class GameState implements Serializable {
     }
 
     public GameInfo getInfo() {
-        info.setPlayer_a(teamA.size());
-        info.setPlayer_b(teamB.size());
+//        info.setPlayer_a(teamA.size());
+//        info.setPlayer_b(teamB.size());
         info.setDeaths_a(getDeadPlayer(teamA.values()).size());
         info.setDeaths_b(getDeadPlayer(teamB.values()).size());
         return info;
     }
 
-    public void healPlayer(){
+    private void healPlayer(){
         for (Player p : players) {
             p.heal(100);
         }
     }
 
-    public void replacePlayers(){
+    private void replacePlayers(){
         for (Player p : players) {
             Random random = new Random();
             int x = random.nextInt(1000) + 20;
-            p.setPosition(new Point(x, 20));
+            p.setPosition(new Point(x, 0));
         }
     }
 }

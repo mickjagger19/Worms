@@ -2,46 +2,37 @@ package client;
 
 //import javafx.scene.canvas.*;
 
-import client.GamefieldController;
 import gameobjects.Explosion;
 import gameobjects.GameWorld;
 import gameobjects.Point;
-import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+
 
 import java.util.LinkedList;
-import java.util.List;
 
-import static java.lang.Thread.sleep;
 
 /**
  * 发射火箭的轨迹计算
  */
 public class Rocket {
-    private Point start;
-    private double initSpeed;
     private double initialX;
     private double initialY;
     private double xSpeed;
     private double ySpeed;
 
-    public static Point p;
+//    public static Point p;
 
-    public static boolean isFLying;
+    static boolean isFLying;
 
 
     public Rocket(Point startPoint, double initialSpeed, double angle) {
-        start = startPoint;
-        initSpeed = initialSpeed;
 
-        initialX = start.getxCoord();
-        initialY = start.getyCoord() - 30;
+        initialX = startPoint.getxCoord();
+        initialY = startPoint.getyCoord() - 30;
 
-        xSpeed = Math.cos(Math.toRadians(angle)) * initSpeed;
-        ySpeed = Math.sin(Math.toRadians(angle)) * initSpeed;
+        xSpeed = Math.cos(Math.toRadians(angle)) * initialSpeed;
+        ySpeed = Math.sin(Math.toRadians(angle)) * initialSpeed;
 
-        start.setyCoord(startPoint.getyCoord() - 20);
+        startPoint.setyCoord(startPoint.getyCoord() - 20);
 
     }
 
@@ -50,7 +41,7 @@ public class Rocket {
     }
 
     // 计算抛物过程
-    public Explosion fly(GameWorld world) throws InterruptedException {
+    public Explosion fly(GameWorld world) {
 
         double GRAVITATIONAL_CONSTANT = 8;
         double currentX;
@@ -63,7 +54,7 @@ public class Rocket {
         currentX = initialX;
         currentY = initialY;
 
-        double gapTime = 0.01;
+        double gapTime = 0.002;
 
         double disX = xSpeed * gapTime;
 
@@ -75,7 +66,9 @@ public class Rocket {
 
 //        System.out.println( "我要开始循环了" );
 
-        GamefieldController.tracks = new LinkedList<Point>();
+        GamefieldController.tracks = new LinkedList<>();
+
+        GamefieldController.flyAngle = new LinkedList<>();
 
             // 计算抛物线，用 currentPoint 存储当前的点
         do {
@@ -90,7 +83,9 @@ public class Rocket {
 
             GamefieldController.tracks.add(new Point(currentX,currentY));
 
-            if (getDistance(world.getNearestPoint(currentPoint), currentPoint) < 10) {
+            GamefieldController.flyAngle.add(Math.atan(ySpeed/xSpeed));
+
+            if ( getDistance(world.getNearestPoint(currentPoint), currentPoint) < 2) {
                 isFLying = true;
 //                System.out.println( "我return了，在目的地爆炸" );
 //                System.out.println("总共画了" + GamefieldController.drawTimes + " 次 ");

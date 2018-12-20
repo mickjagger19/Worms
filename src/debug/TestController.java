@@ -25,7 +25,6 @@ public class TestController implements Initializable {
 
     private GraphicsContext gc;
     private GameWorld gameWorld;
-    private Timer timer;
     private Rocket rocket1;
     private Rocket rocket2;
 
@@ -35,30 +34,22 @@ public class TestController implements Initializable {
         gameWorld = new GameWorld((int) canvas.getWidth(), (int) canvas.getHeight());
         gc = canvas.getGraphicsContext2D();
 
-        timer = new Timer(true);
+        Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if (rocket1 != null) {
-                    Explosion explosion = null;
-                    try {
-                        explosion = rocket1.fly(gameWorld);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Explosion explosion;
+                    explosion = rocket1.fly(gameWorld);
                     if (explosion != null) {
                         rocket1 = null;
                         gameWorld.destroySurface(explosion);
                     }
                 }
                 if (rocket2 != null) {
-                    Explosion explosion = null;
+                    Explosion explosion;
 
-                    try {
-                        explosion = rocket2.fly(gameWorld);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    explosion = rocket2.fly(gameWorld);
 
                     if (explosion != null) {
                         rocket2 = null;
@@ -97,28 +88,13 @@ public class TestController implements Initializable {
 
     private void drawSurface() {
 
-
-//        gc.setFill(Color.WHITE);
-//        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-//        for (Surface surface : gameWorld.getGameWorld()) {
-//            gc.setFill(Color.GREEN);
-//            gc.strokePolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
-//        }
-
-        for (int i = 0; i < gameWorld.getGameWorld().size(); i++) {
-//            if (i == 0) {
-//                gc.setStroke(Color.GREEN);
-//            } else
-//                gc.setStroke(Color.RED);
-            gc.setFill(Color.GREEN);
-            gc.strokePolygon(gameWorld.getGameWorld().get(i).getxCoords(), gameWorld.getGameWorld().get(i).getyCoords(), gameWorld.getGameWorld().get(i).getxCoords().length);
-        }
-
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
 
-        //gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        for (int i = 0; i < gameWorld.getSurface().size(); i++) {
+            gc.strokePolyline(gameWorld.getSurface().get(i).getxCoords(), gameWorld.getSurface().get(i).getyCoords(), gameWorld.getSurface().get(i).getxCoords().length);
+        }
+
 
         if (rocket1 != null) {
             gc.setFill(Color.RED);

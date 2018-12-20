@@ -1,7 +1,5 @@
 package gameobjects;
 
-import client.ClientModel;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,13 +11,11 @@ public class Package implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
-    private GameInfo info;
     private List<Player> players;
     private Player currentPlayer;
     private GameWorld world;
 
-    public Package(GameInfo info, List<Player> players, GameWorld world, Player currentPlayer) {
-        this.info = info;
+    public Package(List<Player> players, GameWorld world, Player currentPlayer) {
         this.players = players;
         this.currentPlayer = currentPlayer;
         this.world = world;
@@ -33,9 +29,9 @@ public class Package implements Serializable {
         return currentPlayer;
     }
 
-    public GameInfo getInfo() {
-        return info;
-    }
+//    public GameInfo getInfo() {
+//        return info;
+//    }
 
     public List<Player> getPlayers() {
         return players;

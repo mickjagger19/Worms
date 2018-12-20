@@ -2,7 +2,6 @@ package client;
 
 import gameobjects.Player;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -16,9 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import server.ServerStatController;
 import server.ServerViewController;
 
 import java.io.IOException;
@@ -49,28 +46,15 @@ public class LoginController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         // 按下S键启动server， 按左键显示前一个皮肤，按右键显示下一个皮肤
-        mainPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                event.consume();
-                changeSkin(event);
-            }
+        mainPane.setOnKeyPressed(event -> {
+            event.consume();
+            changeSkin(event);
         });
         // 按下服务器IP右边的按钮，启动服务器
-        tf_serverip.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                startServer(null);
-            }
-        });
+        tf_serverip.setOnAction(event -> startServer());
 
         // 按下"注册"， 进入等待连接状态
-        tf_playername.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                connect(null);
-            }
-        });
+        tf_playername.setOnAction(event -> connect());
 
         bk_1.setOnAction((ActionEvent t) ->{
             thumbimage.setImage(new Image("images/thumbview1.png"));
@@ -102,26 +86,24 @@ public class LoginController implements Initializable {
             GamefieldController.background_num = 5;
             menubutton.setText("Junkyard");
         });
-
-
     }
 
-    public void changeSkin(KeyEvent event) {
+    private void changeSkin(KeyEvent event) {
         if (event.getCode() == KeyCode.RIGHT) {
-            nextSkin(null);
+            nextSkin();
             bt_left.setDefaultButton(true);
         } else if (event.getCode() == KeyCode.LEFT) {
-            previousSkin(null);
+            previousSkin();
             bt_right.setDefaultButton(true);
-        } else if (event.isControlDown() && event.getCode() == KeyCode.S && event.isAltDown() == false) {
+        } else if (event.isControlDown() && event.getCode() == KeyCode.S && !event.isAltDown()) {
             Stage stage = new Stage();
-            Parent root = null;
+            Parent root;
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/server/views/ServerStat.fxml"));
                 root = loader.load();
-                ServerStatController controller = loader.getController();
+//                ServerStatController controller = loader.getController();
 
-                String ips = "";
+                StringBuilder ips = new StringBuilder();
 
                 Enumeration e = NetworkInterface.getNetworkInterfaces();
                 while (e.hasMoreElements()) {
@@ -130,7 +112,7 @@ public class LoginController implements Initializable {
                     while (ee.hasMoreElements()) {
                         InetAddress i = (InetAddress) ee.nextElement();
                         if (!i.getHostAddress().contains(":"))
-                            ips += String.format(" [%s] ", i.getHostAddress());
+                            ips.append(String.format(" [%s] ", i.getHostAddress()));
                     }
                 }
 
@@ -145,22 +127,22 @@ public class LoginController implements Initializable {
 
         } else if (event.isControlDown() && event.getCode() == KeyCode.P) {
             skinID = 99;
-            nextSkin(null);
+            nextSkin();
         } else if (event.isAltDown() && event.getCode() == KeyCode.P) {
-            connect(null);
+            connect();
         } else if (event.isAltDown() && event.isControlDown() && event.getCode() == KeyCode.S) {
-            startServer(null);
+            startServer();
         }
 
     }
 
-    public void connect(ActionEvent actionEvent) {
+    public void connect() {
 
         ClientModel.getInstance().setLocalPlayer(new Player(tf_playername.getText(), skinID));
         ClientModel.getInstance().setServerIP(tf_serverip.getText());
 
         Stage stage = new Stage();
-        Parent root = null;
+        Parent root;
         try {
             root = FXMLLoader.load(getClass().getResource("view/Gamefield.fxml"));
             stage.setTitle("WORMS - " + tf_serverip.getText() + " [" + tf_playername.getText() + "]");
@@ -180,9 +162,9 @@ public class LoginController implements Initializable {
 
     }
 
-    public void startServer(ActionEvent actionEvent) {
+    public void startServer() {
         Stage stage = new Stage();
-        Parent root = null;
+        Parent root;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/server/views/ServerView.fxml"));
             root = loader.load();
@@ -197,7 +179,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    public void previousSkin(ActionEvent actionEvent) {
+    public void previousSkin() {
         skinID--;
         if (skinID < 0) {
             skinID = Player.WORM_SKINS - 1;
@@ -205,7 +187,7 @@ public class LoginController implements Initializable {
         iv_skin.setImage(new Image(String.format("/images/worms/worm%d.png", skinID)));
     }
 
-    public void nextSkin(ActionEvent actionEvent) {
+    public void nextSkin() {
         skinID++;
         if (skinID >= Player.WORM_SKINS) {
             if (skinID != 100) {

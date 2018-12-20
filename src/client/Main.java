@@ -2,13 +2,10 @@ package client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.InputStream;
 
 public class Main extends Application {
 
@@ -25,7 +22,7 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("/client/view/Mainform.fxml"));
         primaryStage.setTitle("Worms");
-        primaryStage.setScene(new Scene(root, 400, 600));
+        primaryStage.setScene(new Scene(root, 400, 700));
         primaryStage.setResizable(false);
         primaryStage.show();
     }
