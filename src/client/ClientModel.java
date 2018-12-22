@@ -175,6 +175,7 @@ class ClientModel {
 
                 // 发送 localPlayer 信息
                 out.writeObject(getLocalPlayer());
+
                 csocket.close();
             } catch (IOException ex) {
                 ex.printStackTrace();

@@ -1,11 +1,8 @@
 package server;
 
-//import com.sun.xml.internal.ws.api.message.Packet;
-
 import client.Rocket;
 import gameobjects.*;
 import gameobjects.Package;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,13 +28,13 @@ public class ServerModel {
 
     private GameState state;
 
+    private boolean addRocketDone = false;
 
     private static volatile boolean flyDone = false;
 
     public String getServerIP() {
         return serverIP;
     }
-
 
     // 画出服务器端的界面
     private void applyPhysics() {
@@ -46,7 +43,7 @@ public class ServerModel {
             p.applyPhysics(getWorld());
         }
 
-        if (!flyDone) return;
+        if (!flyDone || !addRocketDone ) return;
         System.out.println("进入爆炸");
 
         Rocket r = getRockets().get(0);
@@ -61,6 +58,7 @@ public class ServerModel {
         }
 
         flyDone = false;
+        addRocketDone = false;
     }
 
     List<Rocket> getRockets() {
@@ -96,7 +94,7 @@ public class ServerModel {
     private List<Player> changedPlayers() {
         List<Player> pls = new ArrayList<>();
         for (Player p : getPlayers()) {
-            if (p != null && p.hasChanged())
+            if (p != null)
                 pls.add(p);
         }
         return pls;
@@ -120,12 +118,13 @@ public class ServerModel {
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (state.readyToPlay()) {
+                if (state.readyToPlay() ) {
                     applyPhysics();
                     if (currentShoot == null || currentShoot.isFired()) {
                         if (currentShoot != null) {
                             double speed = currentShoot.getCurrentSpeed() * 90;
                             getRockets().add(new Rocket(getCurrentPlayer().getPosition(), speed, currentShoot.getAngle()));
+                            addRocketDone = true;
                             currentShoot.setFired(false);
                         }
                         //新的一轮, 新的发射
@@ -171,14 +170,15 @@ public class ServerModel {
                                     }
 
                                 } else if (receivedP instanceof Player) {
-//                                    System.out.println("接收 玩家信息");
                                     // 如果是玩家信息的数据包
                                     Player pCL = (Player) receivedP;
+
+                                    // 如果接收到的是玩家信息包
                                     if (players.contains(pCL)) {
-                                        // 如果要更新的玩家信息属于玩家列表
                                         if (pCL.equals(currentPlayer)) {
                                             currentPlayer = pCL;
                                             currentShoot = pCL.getShoot();
+                                            System.out.println("接收到的来自client信息 x:" + pCL.getPosition().getxCoord());
                                             players.set(players.indexOf(pCL), pCL);
                                         }
                                     } else {
@@ -208,7 +208,6 @@ public class ServerModel {
         serverConnection.start();
 
     }
-
 
     static ServerModel getInstance() {
         return ourInstance;

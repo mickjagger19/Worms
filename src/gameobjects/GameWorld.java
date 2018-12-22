@@ -260,26 +260,19 @@ public class GameWorld implements Serializable {
         // 遍历地图中的所有 Surface
         Surface surface = upperSurface;
 
-//        System.out.println("正在处理一个 surface");
 
         // 遍历当前 border中的所有点, 清除爆炸范围内的点
         for (Point point : surface.getBorder()) {
             boolean inExplosion = explosion.cover(point);
             if (startPoint == null && inExplosion) {
                 startPoint = point;
-//                System.out.println("到达爆炸区域");
             } else if (startPoint != null && !inExplosion) {
                 endPoint = point;
-//                System.out.println("开始:" + startPoint.getxCoord() + "\t" + startPoint.getyCoord());
-//                System.out.println("结束:" + endPoint.getxCoord() + "\t" + endPoint.getyCoord());
                 addExplosionArc(startPoint, endPoint, explosion);
                 startPoint = null;
-//                System.out.println("离开爆炸区域");
             } else if (!inExplosion) {
                 pointsToAdd.add(point);
-//                System.out.println("不在爆炸区域");
             }
-
         }
 
         upperSurface.setBorder(pointsToAdd);
@@ -289,13 +282,11 @@ public class GameWorld implements Serializable {
         for (int i = height; i >= height - relativeHeight; i -= 2) {
             wholeBorder.add(new Point(0, i));
         }
-
         wholeBorder.addAll(pointsToAdd);
 
         for (int i = 576 - relativeHeight; i < height; i += 2) {
             wholeBorder.add(new Point(width, i));
         }
-
 
         for (int i = width; i >= 0; i -= 2) {
             wholeBorder.add(new Point(i, height));
@@ -311,20 +302,17 @@ public class GameWorld implements Serializable {
         double angleStart = Math.asin((explosion.getCenter().getyCoord() - start.getyCoord()) / EXPLOSION_RADIUS);
         double angleEnd = Math.asin((explosion.getCenter().getyCoord() - end.getyCoord()) / EXPLOSION_RADIUS);
 
-//        System.out.println("开始角度：" + angleStart);
-//        System.out.println("结束角度：" + angleEnd);
 
         if (start.getxCoord() < explosion.getCenter().getxCoord()) angleStart = Math.PI - angleStart;
         if (angleStart < 0) angleStart += 2 * Math.PI;
         if (end.getxCoord() < explosion.getCenter().getxCoord()) angleEnd = -Math.PI - angleEnd;
         if (angleEnd <= 0 || angleEnd < angleStart) angleEnd += 2 * Math.PI;
 
-//        System.out.println("开始角度：" + angleStart);
-//        System.out.println("结束角度：" + angleEnd);
+
 
         for (double i = angleStart; i <= angleEnd; i += 1.0 / 20) {
-            Point p = new Point(explosion.getCenter().getxCoord() + EXPLOSION_RADIUS * Math.cos(i), explosion.getCenter().getyCoord() - EXPLOSION_RADIUS * Math.sin(i));
-            System.out.println(p.getxCoord() + "  " + p.getyCoord());
+            Point p = new Point((int)explosion.getCenter().getxCoord() + EXPLOSION_RADIUS * Math.cos(i), (int)explosion.getCenter().getyCoord() - EXPLOSION_RADIUS * Math.sin(i));
+
             pointsToAdd.add(p);
         }
 
@@ -366,7 +354,6 @@ public class GameWorld implements Serializable {
     public Point getNearestPoint(Point p) {
         Point nearestPoint = null;
 
-
         if (!upperSurface.getBorder().isEmpty()) {
             nearestPoint = upperSurface.getBorder().get(upperSurface.getIndexofNearestPoint(p));
         }
@@ -374,7 +361,7 @@ public class GameWorld implements Serializable {
         if (nearestPoint == null)
             return p;
         else {
-            System.out.println("x: " + nearestPoint.getxCoord() + "\ty: " + nearestPoint.getyCoord() );
+//            System.out.println("getNearestPoint x: " + nearestPoint.getxCoord() + "\ty: " + nearestPoint.getyCoord());
             return new Point(nearestPoint.getxCoord(), nearestPoint.getyCoord());
         }
     }

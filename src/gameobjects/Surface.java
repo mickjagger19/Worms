@@ -88,16 +88,19 @@ public class Surface implements Serializable {
      */
     int getIndexofNearestPoint(Point point) {
 
-        double smallestDistance = Double.MAX_VALUE;
+        double smallestDistancex = Double.MAX_VALUE;
         int index = 0;
 
         for (Point borderPoint : border) {
             // 找出 border 中离指定点最近的距离
-            if (smallestDistance > getDistance(borderPoint, point)) {
-                smallestDistance = getDistance(borderPoint, point);
+
+
+            if ( Math.abs( point.getxCoord() - borderPoint.getxCoord()) < smallestDistancex ) {
+                smallestDistancex = Math.abs( point.getxCoord() - borderPoint.getxCoord());
                 index = border.indexOf(borderPoint);
             }
         }
+
         return index;
     }
 

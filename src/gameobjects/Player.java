@@ -68,34 +68,34 @@ public class Player implements Serializable {
      * 计算玩家应该处于的位置
      */
     public void applyPhysics(GameWorld gameWorld) {
+
         if (position != null) {
             // 游戏开始时，下落
-            if (getDistance(gameWorld.getNearestPoint(position), position) > 5)
+            if (getDistance(gameWorld.getNearestPoint(position), position) > 5) {
                 //向下移动5个单位
                 position.setyCoord(position.getyCoord() + 5);
+                System.out.println("掉了掉了掉了");
+            }
 
             else if (position.getyCoord() > 576){
                     //超出地图底部，判定为死亡，扣除100点生命值
                     removeHealth(100);
             }
-            else if (!isDead()) {
+            else if (!isDead() && hasChanged() ) {
                 // 找到离当前位置最近的点
 
+                System.out.println("applyPhysics 找出最近点之前 x: " + position.getxCoord() );
                 Point point = gameWorld.getNearestPoint(position);
                 point.setyCoord(point.getyCoord() - 2);
                 position = point;
 
                 System.out.println("applyPhysics 我将移动到 x: " + position.getxCoord() );
+                changed  = false;
             }
         }
-        changed = true;
     }
 
     public void movePlayer(int value) {
-//        System.out.println("我移动了 " + (double)value);
-//        System.out.println("我原来在 " + position.getxCoord());
-//        System.out.println("我将要在 " + (position.getxCoord() + (double)value ));
-
         position.setxCoord(position.getxCoord() + value);
         changed = true;
     }
@@ -195,8 +195,8 @@ public class Player implements Serializable {
 //        }
 //    }
 
-    public boolean hasChanged(){
-        if ( changed) { changed = false; return true;}
+    private boolean hasChanged(){
+        if ( changed ) { changed = false; return true;}
         else return false;
     }
 

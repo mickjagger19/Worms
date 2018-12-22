@@ -137,7 +137,8 @@ public class GamefieldController implements Initializable {
                     }
                 }
                 if (event.getCode() == KeyCode.RIGHT) {
-//                        System.out.println("检测到向右");
+//                    System.out.println("moving player");
+
                     model.getLocalPlayer().movePlayer(2);
                     model.getLocalPlayer().previousDir = model.getLocalPlayer().dir;
                     model.getLocalPlayer().dir = Player.direction.right;
