@@ -38,14 +38,18 @@ public class ServerModel {
         return serverIP;
     }
 
+
+    // 画出服务器端的界面
     private void applyPhysics() {
+
         for (Player p : getPlayers()) {
             p.applyPhysics(getWorld());
         }
 
         if (!flyDone) return;
         System.out.println("进入爆炸");
-        Rocket r = rockets.get(0);
+
+        Rocket r = getRockets().get(0);
 
         Explosion explosion = r.fly(getWorld());
 
@@ -90,13 +94,12 @@ public class ServerModel {
     }
 
     private List<Player> changedPlayers() {
-        return getPlayers();/*
         List<Player> pls = new ArrayList<>();
         for (Player p : getPlayers()) {
             if (p != null && p.hasChanged())
                 pls.add(p);
         }
-        return pls;*/
+        return pls;
     }
 
     private ServerModel() {
@@ -132,8 +135,8 @@ public class ServerModel {
                 }
             }
         }, 50, 5);
-        Thread serverConnection = new Thread(() -> {
 
+        Thread serverConnection = new Thread(() -> {
             try {
                 ServerSocket socket = new ServerSocket(2387);
                 while (true) {
@@ -154,14 +157,16 @@ public class ServerModel {
                                     // 如果是游戏信息的数据包
                                     //TODO
                                     // 根据 receivedP 的类型，确定数据包的具体内容
+//                                    if (changedPlayers().size()!= 0)
+//                                        System.out.println("changedPlayers x: " + changedPlayers().get(0).getPosition().getxCoord());
+
                                     if (receivedP.equals(UpdateInformation.Player)) {
-//                                        System.out.println("接收 Player");
                                         out.writeObject(new Package(changedPlayers(), null, currentPlayer));
                                     } else if (receivedP.equals(UpdateInformation.World)) {
-//                                        System.out.println("接收 World");
+
                                         out.writeObject(new Package(null, world, currentPlayer));
                                     } else if (receivedP.equals(UpdateInformation.World_a_Player)) {
-//                                        System.out.println("接收 World_a_Player");
+
                                         out.writeObject(new Package(changedPlayers(), world, currentPlayer));
                                     }
 

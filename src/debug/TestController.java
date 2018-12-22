@@ -91,9 +91,9 @@ public class TestController implements Initializable {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(2);
 
-        for (int i = 0; i < gameWorld.getSurface().size(); i++) {
-            gc.strokePolyline(gameWorld.getSurface().get(i).getxCoords(), gameWorld.getSurface().get(i).getyCoords(), gameWorld.getSurface().get(i).getxCoords().length);
-        }
+//        for (int i = 0; i < gameWorld.getSurface().size(); i++) {
+            gc.strokePolyline(gameWorld.getSurface().getxCoords(), gameWorld.getSurface().getyCoords(), gameWorld.getSurface().getxCoords().length);
+//        }
 
 
         if (rocket1 != null) {

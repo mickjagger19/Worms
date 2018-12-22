@@ -1,10 +1,7 @@
 package gameobjects;
 
-
-import java.io.PipedInputStream;
 import java.io.Serializable;
 import java.util.*;
-
 
 /**
  * GameWorld 有一个 Surface 列表
@@ -21,8 +18,8 @@ public class GameWorld implements Serializable {
     public static int relativeHeight;
     private static LinkedList<Point> pointsToAdd = new LinkedList<>();
 
-    private List<Surface> upperSurface;
-    private List<Surface> wholeSurface = new LinkedList<>();
+    private Surface upperSurface = new Surface();
+    private Surface wholeSurface = new Surface();
     private final int width;            // 地图的宽度
 
     private boolean worldChanged = false;
@@ -31,7 +28,7 @@ public class GameWorld implements Serializable {
     public GameWorld(int width, int height) {
         this.width = width;
 //        this.height = height;
-        upperSurface = Collections.synchronizedList(new LinkedList<>());
+//        upperSurface = new Surface();
         generateSurface();
     }
 
@@ -56,7 +53,6 @@ public class GameWorld implements Serializable {
         int waveLength;
         //变化的高度
         int waveHeight;
-
 
 
         while (remainingHorizontal > 0) {
@@ -112,8 +108,9 @@ public class GameWorld implements Serializable {
             wholeBorder.add(new Point(i, height));
         }
 
-        wholeSurface.add (new Surface(wholeBorder));
-        getSurface().add(new Surface(generatedWorld));
+        wholeSurface = new Surface(wholeBorder);
+//        getSurface().add(new Surface(generatedWorld));
+        upperSurface = new Surface(generatedWorld);
 
         worldChanged = true;
     }
@@ -261,91 +258,72 @@ public class GameWorld implements Serializable {
         pointsToAdd = new LinkedList<>();
 
         // 遍历地图中的所有 Surface
-        for (Surface surface : upperSurface) {
+        Surface surface = upperSurface;
 
-            System.out.println("正在处理一个 surface");
+//        System.out.println("正在处理一个 surface");
 
-            // 遍历当前 border中的所有点, 清除爆炸范围内的点
-            for (Point point : surface.getBorder()) {
-                boolean inExplosion = explosion.cover(point);
-                if (startPoint == null && inExplosion ) {
-                    startPoint = point;
-                    System.out.println("到达爆炸区域");
-                } else if (startPoint != null && !inExplosion ) {
-                    endPoint = point;
-                    System.out.println("开始:" + startPoint.getxCoord() + "\t" + startPoint.getyCoord());
-                    System.out.println("结束:" + endPoint.getxCoord() + "\t" + endPoint.getyCoord());
-                    addExplosionArc(startPoint, endPoint, explosion);
-                    startPoint = null;
-                    System.out.println("离开爆炸区域");
-                } else if (!inExplosion) {
-                    pointsToAdd.add(point);
-                    System.out.println("不在爆炸区域");
-                }
-
+        // 遍历当前 border中的所有点, 清除爆炸范围内的点
+        for (Point point : surface.getBorder()) {
+            boolean inExplosion = explosion.cover(point);
+            if (startPoint == null && inExplosion) {
+                startPoint = point;
+//                System.out.println("到达爆炸区域");
+            } else if (startPoint != null && !inExplosion) {
+                endPoint = point;
+//                System.out.println("开始:" + startPoint.getxCoord() + "\t" + startPoint.getyCoord());
+//                System.out.println("结束:" + endPoint.getxCoord() + "\t" + endPoint.getyCoord());
+                addExplosionArc(startPoint, endPoint, explosion);
+                startPoint = null;
+//                System.out.println("离开爆炸区域");
+            } else if (!inExplosion) {
+                pointsToAdd.add(point);
+//                System.out.println("不在爆炸区域");
             }
 
         }
 
-        upperSurface.get(0).setBorder(pointsToAdd);
+        upperSurface.setBorder(pointsToAdd);
 
         List<Point> wholeBorder = new LinkedList<>();
 
-
-//        添加地图左侧的所有点
         for (int i = height; i >= height - relativeHeight; i -= 2) {
             wholeBorder.add(new Point(0, i));
         }
 
         wholeBorder.addAll(pointsToAdd);
-        //添加地图右侧的点
+
         for (int i = 576 - relativeHeight; i < height; i += 2) {
             wholeBorder.add(new Point(width, i));
         }
 
-        //添加地图底部的点
+
         for (int i = width; i >= 0; i -= 2) {
             wholeBorder.add(new Point(i, height));
         }
 
-        wholeSurface.get(0).setBorder(wholeBorder);
+        wholeSurface.setBorder(wholeBorder);
 
         worldChanged = true;
-        System.out.println("服务器 destroy surface 完毕");
-    }
-
-    private boolean coversPoint(Point p) {
-        for (Surface surface : upperSurface) {
-            for (Point surfaceP : surface.getBorder()) {
-                if (Math.abs(surfaceP.getxCoord() - p.getxCoord()) < 0.5 && surfaceP.getyCoord() != 0 && surfaceP.getyCoord() < p.getyCoord()) {
-                    System.out.println("服务器认为应该添加");
-                    System.out.println("爆炸点坐标:     " + p.getxCoord() + "\t" + p.getyCoord());
-                    System.out.println("横坐标最近坐标:" + surfaceP.getxCoord() + "\t" + surfaceP.getyCoord());
-                    return true;
-                }
-            }
-        }
-        System.out.println("我TM怎么到了这一步");
-        return false;
+//        System.out.println("服务器 destroy surface 完毕");
     }
 
     private void addExplosionArc(Point start, Point end, Explosion explosion) {
-        double angleStart = Math.asin((explosion.getCenter().getyCoord() -start.getyCoord()) / EXPLOSION_RADIUS);
-        double angleEnd = Math.asin( (explosion.getCenter().getyCoord() - end.getyCoord()) / EXPLOSION_RADIUS);
+        double angleStart = Math.asin((explosion.getCenter().getyCoord() - start.getyCoord()) / EXPLOSION_RADIUS);
+        double angleEnd = Math.asin((explosion.getCenter().getyCoord() - end.getyCoord()) / EXPLOSION_RADIUS);
 
-        System.out.println("开始角度：" + angleStart);
-        System.out.println("结束角度：" + angleEnd);
+//        System.out.println("开始角度：" + angleStart);
+//        System.out.println("结束角度：" + angleEnd);
 
         if (start.getxCoord() < explosion.getCenter().getxCoord()) angleStart = Math.PI - angleStart;
-        if (angleStart < 0) angleStart += 2* Math.PI;
+        if (angleStart < 0) angleStart += 2 * Math.PI;
         if (end.getxCoord() < explosion.getCenter().getxCoord()) angleEnd = -Math.PI - angleEnd;
         if (angleEnd <= 0 || angleEnd < angleStart) angleEnd += 2 * Math.PI;
 
-        System.out.println("开始角度：" + angleStart);
-        System.out.println("结束角度：" + angleEnd);
+//        System.out.println("开始角度：" + angleStart);
+//        System.out.println("结束角度：" + angleEnd);
 
-        for (double i =  angleStart; i <= angleEnd; i += 1.0/20) {
-            Point p  = new Point(explosion.getCenter().getxCoord() + EXPLOSION_RADIUS * Math.cos(i), explosion.getCenter().getyCoord() - EXPLOSION_RADIUS * Math.sin(i));
+        for (double i = angleStart; i <= angleEnd; i += 1.0 / 20) {
+            Point p = new Point(explosion.getCenter().getxCoord() + EXPLOSION_RADIUS * Math.cos(i), explosion.getCenter().getyCoord() - EXPLOSION_RADIUS * Math.sin(i));
             System.out.println(p.getxCoord() + "  " + p.getyCoord());
             pointsToAdd.add(p);
         }
@@ -372,52 +350,33 @@ public class GameWorld implements Serializable {
 
     // 返回当面 surface 是否包含某个点
     public boolean containsPoint(Point p) {
-        for (Surface surface : getSurface()) {
-            if (surface.contains(p))
-                return true;
-        }
-        return false;
+        return upperSurface.contains(p);
     }
 
-    public synchronized List<Surface> getSurface() {
+    public synchronized Surface getSurface() {
         return upperSurface;
     }
 
-    public synchronized List<Surface> getWholeSurface() {
+    public synchronized Surface getWholeSurface() {
         return wholeSurface;
     }
 
 
-
-//    public synchronized Surface getBorder(){
-//        return border;
-//    }
-
-
     //计算地图中距离p最近的点
     public Point getNearestPoint(Point p) {
-
         Point nearestPoint = null;
-        Point currentPoint;
 
-        for (int i = 0; i < getSurface().size(); i++) {
-            Surface surface = getSurface().get(i);
-            if (!surface.getBorder().isEmpty()) {
-                currentPoint = surface.getBorder().get(surface.getIndexofNearestPoint(p));
 
-                if (nearestPoint == null || getDistance(p, nearestPoint) > getDistance(p, currentPoint))
-                    nearestPoint = currentPoint;
-            }
+        if (!upperSurface.getBorder().isEmpty()) {
+            nearestPoint = upperSurface.getBorder().get(upperSurface.getIndexofNearestPoint(p));
         }
+
         if (nearestPoint == null)
             return p;
-        else
+        else {
+            System.out.println("x: " + nearestPoint.getxCoord() + "\ty: " + nearestPoint.getyCoord() );
             return new Point(nearestPoint.getxCoord(), nearestPoint.getyCoord());
-    }
-
-    //计算两个点之间的距离
-    private double getDistance(Point point1, Point point2) {
-        return Math.sqrt(Math.pow(Math.abs(point1.getxCoord() - point2.getxCoord()), 2) + Math.pow(Math.abs(point1.getyCoord() - point2.getyCoord()), 2));
+        }
     }
 
     public boolean isWorldChanged() {

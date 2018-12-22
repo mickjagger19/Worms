@@ -1,6 +1,7 @@
 package server;
 
 import client.Rocket;
+import gameobjects.GameWorld;
 import gameobjects.Player;
 import gameobjects.Surface;
 import javafx.application.Platform;
@@ -19,8 +20,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static gameobjects.GameWorld.relativeHeight;
 
 
 public class ServerViewController implements Initializable {
@@ -48,26 +47,50 @@ public class ServerViewController implements Initializable {
         Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             private void run2() {
-                hudgc.setFont(new Font("System", 14));
+
+                hudgc.setFont(new Font("Monaco", 14));
+
                 hudgc.drawImage(new Image("/images/hud_background.png"), 0, 0, 1024, 50);
 
-                hudgc.setFill(Color.DARKGRAY);
-                hudgc.fillRoundRect(10, 10, 104, 24, 5, 5);
-                hudgc.setStroke(Color.BLACK);
-                hudgc.strokeRoundRect(10, 10, 104, 24, 5, 5);
-
                 if (model.getCurrentPlayer() != null) {
+
+                    hudgc.setFill(Color.WHITE);
+                    hudgc.fillRoundRect(10, 13, 104, 24, 5, 5);
+
+                    hudgc.setStroke(Color.PINK);
+                    hudgc.strokeRoundRect(10, 13, 104, 24, 5, 5);
+
                     if (model.getCurrentPlayer().getShoot() != null) {
-                        hudgc.setFill(Color.DARKRED);
-                        hudgc.fillRoundRect(12, 12, model.getCurrentPlayer().getShoot().getCurrentSpeed() * 100, 20, 5, 5);
-                        hudgc.setStroke(Color.WHITE);
-                        hudgc.strokeText(String.format("%d%%", (int) (model.getCurrentPlayer().getShoot().getCurrentSpeed() * 100)), 49, 26);
+                        //速度条填充
+                        hudgc.setFill(Color.color(0.937, 0.294, 0.227, 1));
+                        hudgc.fillRoundRect(12, 15, model.getCurrentPlayer().getShoot().getCurrentSpeed() * 100, 20, 5, 5);
+
+                        //速度条数字
+                        hudgc.setStroke(Color.BLACK);
+                        hudgc.strokeText(String.format("%d%%", (int) (model.getCurrentPlayer().getShoot().getCurrentSpeed() * 100)), 49, 30);
                     }
-                    if (model.getCurrentPlayer().getPosition() != null) {
-                        hudgc.setFill(Color.ORANGE);
-                        hudgc.fillText(String.format("%s: X:%f Y:%f   ∠ %.2f°    ♥ %d", model.getCurrentPlayer().getName(), model.getCurrentPlayer().getPosition().getxCoord(),
-                                model.getCurrentPlayer().getPosition().getyCoord(), model.getCurrentPlayer().getShoot().getAngle(), model.getCurrentPlayer().getHealth()), 250, 15);
-                    }
+
+
+                    hudgc.setStroke(Color.ORANGE);
+                    hudgc.strokeText(String.format("%s: X: %f Y: %f", model.getCurrentPlayer().getName(), model.getCurrentPlayer().getPosition().getxCoord(),
+                            model.getCurrentPlayer().getPosition().getyCoord()), 400, 33);
+
+
+                    hudgc.setStroke(Color.ORANGE);
+
+                    hudgc.strokeText(String.format("现在轮到%s了", model.getCurrentPlayer().getName()), 720, 33);
+
+
+                    // 角度信息
+                    hudgc.setStroke(Color.ORANGE);
+                    hudgc.strokeText(String.format("角度: %.2f", model.getCurrentPlayer().getShoot().getAngle()), 230, 33);
+
+                    // 生命值
+
+                    hudgc.setFill(Color.RED);
+                    hudgc.setFont(new Font("Monaco", 24));
+                    hudgc.fillText(String.format("♥ %d", model.getCurrentPlayer().getHealth()), 930, 35);
+
                 }
             }
 
@@ -109,7 +132,7 @@ public class ServerViewController implements Initializable {
             }
 
         if (model.getCurrentPlayer() != null && model.getCurrentPlayer().getPosition() != null) {
-            //Targetmarker
+
             double x = model.getCurrentPlayer().getPosition().getxCoord();
             double y = model.getCurrentPlayer().getPosition().getyCoord();
 
@@ -127,18 +150,18 @@ public class ServerViewController implements Initializable {
                 a = Math.sin(Math.toRadians(angle360)) * 50;
                 b = Math.cos(Math.toRadians(angle360)) * 50;
             }
+
             gc.setFill(Color.BLACK);
             gc.fillOval(x + b - 4, y - a - 4, 8, 8);
             gc.setFill(Color.GOLD);
             gc.fillOval(x + b - 3, y - a - 3, 6, 6);
+
             //gc.drawImage(new Image("/images/crossfade.png"), mouse.getxCoord() - 11, mouse.getyCoord() - 11, 21, 21);
 
             //Localplayersign
             gc.drawImage(new Image("/images/current_arrow.png"), model.getCurrentPlayer().getPosition().getxCoord() - 6,
                     model.getCurrentPlayer().getPosition().getyCoord() - 40, 11, 10);
 
-
-            //STATS
 
             //Dead Players
             Font fhd = new Font("System", 14);
@@ -227,17 +250,18 @@ public class ServerViewController implements Initializable {
             gcgf.clearRect(0, 0, canvas_gamefield.getWidth(), canvas_gamefield.getHeight());
 
 
-            gcgf.setStroke(Color.GREEN);
+            gcgf.setStroke(Color.SANDYBROWN);
             gcgf.setLineWidth(3);
-            for (Surface surface : model.getWorld().getSurface()) {
 
-                gcgf.strokePolyline(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
-            }
+            Surface surface = model.getWorld().getSurface();
+            gcgf.strokePolyline(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
+
 
             gcgf.setFill(new ImagePattern(new Image("/images/EarthPattern.png")));
-            for (Surface surface : model.getWorld().getWholeSurface()) {
-                gcgf.fillPolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
-            }
+
+            surface = model.getWorld().getWholeSurface();
+            gcgf.fillPolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
+
 
         }
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

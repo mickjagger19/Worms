@@ -75,6 +75,7 @@ public class GameState implements Serializable {
 
     public Player nextPlayer() {
         Player next;
+
         if (left_TeamA == null || left_TeamB == null)
             newRound();
 
@@ -123,6 +124,7 @@ public class GameState implements Serializable {
         }
 
         next.setCurrent();
+
         return next;
     }
 
@@ -137,8 +139,7 @@ public class GameState implements Serializable {
     }
 
     public GameInfo getInfo() {
-//        info.setPlayer_a(teamA.size());
-//        info.setPlayer_b(teamB.size());
+
         info.setDeaths_a(getDeadPlayer(teamA.values()).size());
         info.setDeaths_b(getDeadPlayer(teamB.values()).size());
         return info;

@@ -16,8 +16,14 @@ public class Surface implements Serializable {
     private double[] xCoords;
     private double[] yCoords;
 
+    Surface() {
+        border = null;
+        xCoords = null;
+        yCoords = null;
+    }
+
     // 指定边界的构造器
-    public Surface(List<Point> border) {
+    Surface(List<Point> border) {
         this.border = border;
         rearrangePoints();
     }
@@ -29,14 +35,14 @@ public class Surface implements Serializable {
     }
 
 
-    public List<Point> getBorder() {
+    List<Point> getBorder() {
         return border;
     }
 
     /**
      * border更改后，根据新的border, 更新 Surface 中的所有点的坐标
      */
-    public void rearrangePoints() {
+    private void rearrangePoints() {
         xCoords = new double[border.size()];
         yCoords = new double[border.size()];
 
@@ -85,7 +91,7 @@ public class Surface implements Serializable {
         double smallestDistance = Double.MAX_VALUE;
         int index = 0;
 
-        for (Point borderPoint : border){
+        for (Point borderPoint : border) {
             // 找出 border 中离指定点最近的距离
             if (smallestDistance > getDistance(borderPoint, point)) {
                 smallestDistance = getDistance(borderPoint, point);

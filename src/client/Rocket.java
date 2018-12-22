@@ -64,16 +64,14 @@ public class Rocket {
 
         isFLying = false;
 
-//        System.out.println( "我要开始循环了" );
 
         GamefieldController.tracks = new LinkedList<>();
 
         GamefieldController.flyAngle = new LinkedList<>();
 
-            // 计算抛物线，用 currentPoint 存储当前的点
+
         do {
 
-//            System.out.println( "我循环了一次" );
             ySpeed = ySpeed - GRAVITATIONAL_CONSTANT*gapTime;
             currentX = currentX + disX;
             disY = ySpeed*gapTime;
@@ -87,21 +85,13 @@ public class Rocket {
 
             if ( getDistance(world.getNearestPoint(currentPoint), currentPoint) < 2) {
                 isFLying = true;
-//                System.out.println( "我return了，在目的地爆炸" );
-//                System.out.println("总共画了" + GamefieldController.drawTimes + " 次 ");
                 GamefieldController.drawTimes = 0;
                 return explode(currentPoint);
                 }
 
         } while ( currentY < 576 && currentY > 0 && currentX >0 && currentX < 1100);
-
-
-//        System.out.println( "我结束循环了" );
-
         isFLying = true;
         return null;
-
-
     }
 
     public Point getPosition() {

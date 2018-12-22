@@ -10,6 +10,7 @@ public class Point implements Serializable, Comparable {
     private double xCoord;
     private double yCoord;
 
+
     @Override
     public int compareTo(Object o) {
         Point object = (Point)o;
@@ -35,6 +36,8 @@ public class Point implements Serializable, Comparable {
 
     public void setxCoord(double xCoord) {
         this.xCoord = xCoord;
+
+//        System.out.println("我在" + this.xCoord);
     }
 
     public void setyCoord(double yCoord) {
@@ -44,6 +47,7 @@ public class Point implements Serializable, Comparable {
         else {
             this.yCoord = yCoord;
         }
+
     }
 
     @Override
@@ -53,5 +57,8 @@ public class Point implements Serializable, Comparable {
                 ", Y:" + yCoord +
                 '}';
     }
+
+
+
 
 }

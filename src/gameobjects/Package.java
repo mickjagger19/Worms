@@ -29,10 +29,6 @@ public class Package implements Serializable {
         return currentPlayer;
     }
 
-//    public GameInfo getInfo() {
-//        return info;
-//    }
-
     public List<Player> getPlayers() {
         return players;
     }

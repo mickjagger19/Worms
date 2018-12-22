@@ -2,6 +2,7 @@ package client;
 
 import gameobjects.*;
 import gameobjects.Package;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +17,7 @@ import java.util.*;
  * 其他用户注册后，该类被替换
  * 使用了 socket
  */
-public class ClientModel {
+class ClientModel {
 
     private static ClientModel singelton;
 
@@ -70,38 +71,37 @@ public class ClientModel {
                             }
                             ObjectInputStream in = new ObjectInputStream(csocket.getInputStream());
 
-                            // 读取 server 发往 client 的数据
+                            // 接收 server 发往 client 的数据
                             Package p = (Package) in.readObject();
 
-                            if (p.getWorld() != null)
+                            if ( p.getWorld() != null )
                                 world = p.getWorld();
-                            if (p.getCurrentPlayer() != null)
+                            if ( p.getCurrentPlayer() != null )
                                 currentPlayer = p.getCurrentPlayer();
 
                             otherPlayers = p.getPlayers();
 
                             // 根据接收的数据，进行相应处理
-                            if (otherPlayers != null && otherPlayers.size() > 0 && otherPlayers.contains(localPlayer)) {
+                            if ( otherPlayers != null && otherPlayers.size() > 0 && otherPlayers.contains(localPlayer)) {
                                 localPlayer = otherPlayers.get(otherPlayers.indexOf(localPlayer));
+//                                System.out.println("从客户端发来的信息，本地玩家的x: " + localPlayer.getPosition().getxCoord());
                                 otherPlayers.remove(localPlayer);
                             } else {
                                 csocket.close();
                                 sendData();
                             }
 
-
-
                         }
 
                     }
                 } catch (ConnectException e) {
-                    e.printStackTrace();
-                    System.out.println("[C] 连接失败！");
+
+                    System.out.println("[C] 连接失败！请检查服务器状态");
                 } catch (IOException | ClassNotFoundException ex) {
-                    ex.printStackTrace();
+                    System.out.println("[C] I/O异常");
                 }
                 worldRequest--;
-                if(worldRequest<0)
+                if (worldRequest < 0)
                     worldRequest = 32;
             }
         }, 0, 20);

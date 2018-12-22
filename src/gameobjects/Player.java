@@ -26,6 +26,8 @@ public class Player implements Serializable {
 
     private int wormSkin = 0;
 
+    private boolean changed = false;
+
     public enum direction{
         left,
         right
@@ -62,29 +64,40 @@ public class Player implements Serializable {
         this.position = position;
     }
 
+    /*
+     * 计算玩家应该处于的位置
+     */
     public void applyPhysics(GameWorld gameWorld) {
         if (position != null) {
-
             // 游戏开始时，下落
-            if (getDistance(gameWorld.getNearestPoint(position), position) > 3)
+            if (getDistance(gameWorld.getNearestPoint(position), position) > 5)
                 //向下移动5个单位
                 position.setyCoord(position.getyCoord() + 5);
 
-            if (position.getyCoord() > 576)
-                //超出地图底部，判定为死亡，扣除100点生命值
-                removeHealth(100);
+            else if (position.getyCoord() > 576){
+                    //超出地图底部，判定为死亡，扣除100点生命值
+                    removeHealth(100);
+            }
+            else if (!isDead()) {
+                // 找到离当前位置最近的点
 
-            if (!isDead() && gameWorld.containsPoint(position)) {
                 Point point = gameWorld.getNearestPoint(position);
                 point.setyCoord(point.getyCoord() - 2);
                 position = point;
+
+                System.out.println("applyPhysics 我将移动到 x: " + position.getxCoord() );
             }
-//            changed = true;
         }
+        changed = true;
     }
 
     public void movePlayer(int value) {
+//        System.out.println("我移动了 " + (double)value);
+//        System.out.println("我原来在 " + position.getxCoord());
+//        System.out.println("我将要在 " + (position.getxCoord() + (double)value ));
+
         position.setxCoord(position.getxCoord() + value);
+        changed = true;
     }
 
     /*
@@ -110,13 +123,12 @@ public class Player implements Serializable {
             else {
                 this.health = health - removedHealth;
             }
-//            changed = true;
         }
-        //            changed = false;
+        changed = false;
     }
 
     public boolean isDead() {
-        return health <= 0 || position.getyCoord() > 576;
+        return (health <= 0 || (position != null && position.getyCoord() > 576 )) ;
     }
 
     public Shoot getShoot() {
@@ -182,6 +194,11 @@ public class Player implements Serializable {
 //                ownShoot.setChanged(false);
 //        }
 //    }
+
+    public boolean hasChanged(){
+        if ( changed) { changed = false; return true;}
+        else return false;
+    }
 
     /**
      * 治疗，返回正确的health值

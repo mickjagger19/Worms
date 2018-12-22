@@ -179,7 +179,6 @@ public class GamefieldController implements Initializable {
                                                       hudgc.drawImage(new Image("/images/hud_background.png"), 0, 0, 1024, 50);
 
                                                       hudgc.setFill(Color.WHITE);
-
                                                       hudgc.fillRoundRect(10, 13, 104, 24, 5, 5);
 
                                                       hudgc.setStroke(Color.PINK);
@@ -209,7 +208,6 @@ public class GamefieldController implements Initializable {
                                                               else
                                                                   hudgc.strokeText(String.format("现在轮到 %s, 休息一下吧", model.getCurrentPlayer().getName()), 680, 33);
                                                           }
-
 
                                                           // 角度信息
                                                           hudgc.setStroke(Color.ORANGE);
@@ -276,7 +274,11 @@ public class GamefieldController implements Initializable {
 
                 System.out.println("我在画：" + currentPoint.getxCoord() + ", " + currentPoint.getyCoord());
 
-                paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+//                paragc.drawImage(new Image("/images/parabola.png"), currentPoint.getxCoord(), currentPoint.getyCoord());
+
+                paragc.setFill(Color.GOLD);
+
+                paragc.fillOval(currentPoint.getxCoord(), currentPoint.getyCoord(), 10, 10);
 
 //                paragc.rotate(flyAngle.get((int)index));
             }
@@ -353,6 +355,7 @@ public class GamefieldController implements Initializable {
         gcPl.clearRect(0, 0, canvas.getWidth(), canvas.getWidth());
 
         if (model != null && model.getPlayers() != null) {
+
             for (Player p : model.getPlayers()) {
                 if (p != null && p.getPosition() != null) {
                     double x = p.getPosition().getxCoord();
@@ -382,21 +385,18 @@ public class GamefieldController implements Initializable {
                 ClientModel.getInstance().getWorld().setWorldChanged();
                 gcgf.clearRect(0, 0, canvas_gamefield.getWidth(), canvas_gamefield.getHeight());
 
-
-                gcgf.setStroke(Color.GREEN);
+                // 画土地表层
+                gcgf.setStroke(Color.SADDLEBROWN);
                 gcgf.setLineWidth(4);
-                // 土地表层
-                for (int i = 0; i < model.getWorld().getSurface().size(); i++) {
-                    Surface surface = model.getWorld().getSurface().get(i);
-                    gcgf.strokePolyline(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
-                }
+                Surface surface = model.getWorld().getSurface();
+                gcgf.strokePolyline(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
 
 
+                // 画土地
                 gcgf.setFill(new ImagePattern(new Image("/images/EarthPattern.png")));
-                for (Surface surface : model.getWorld().getWholeSurface()) {
+                surface = model.getWorld().getWholeSurface();
+                gcgf.fillPolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
 
-                    gcgf.fillPolygon(surface.getxCoords(), surface.getyCoords(), surface.getxCoords().length);
-                }
 
             }
         }
@@ -416,20 +416,19 @@ public class GamefieldController implements Initializable {
                             gc.drawImage(new Image("/images/enemy_arrow.png"), p.getPosition().getxCoord() - 6,
                                     p.getPosition().getyCoord() - 70, 11, 10);
                         }
-
                         // 名字
                         gc.setFill(Color.BLACK);
-                        gc.setFont(new Font("System", 12));
+                        gc.setFont(new Font("Monaco", 12));
                         gc.fillText(p.getName(), p.getPosition().getxCoord() - (getStringWidth(p.getName(), new Font("System", 12)) / 2), p.getPosition().getyCoord() - 45);
 
                         // 生命值
                         gc.setFill(Color.RED);
-                        gc.setFont(new Font("System", 10));
+                        gc.setFont(new Font("Monaco", 10));
                         gc.fillText(String.format("%d%%", p.getHealth()), p.getPosition().getxCoord() -
                                 (getStringWidth(String.format("%d%%", p.getHealth()), new Font("System", 10)) / 2), p.getPosition().getyCoord() - 30);
                     } else {
                         gc.setFill(Color.RED);
-                        gc.setFont(new Font("System", 10));
+                        gc.setFont(new Font("Monaco", 10));
                         gc.fillText(p.getName(), p.getPosition().getxCoord() - (getStringWidth(p.getName(), new Font("System", 10)) / 2), p.getPosition().getyCoord() - 25);
                     }
                 }

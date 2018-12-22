@@ -83,7 +83,5 @@ public class ServerStatController implements Initializable {
         }, 200, 1000);
     }
 
-//    public ServerModel getModel() {
-//        return model;
-//    }
+
 }

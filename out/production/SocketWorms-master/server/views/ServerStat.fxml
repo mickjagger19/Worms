@@ -156,12 +156,12 @@
                                        <children>
                                           <Label text="X">
                                              <font>
-                                                <Font size="18.0" />
+                                                <Font name="Monaco" size="18.0" />
                                              </font>
                                           </Label>
                                           <Label fx:id="lb_curX" text="000">
                                              <font>
-                                                <Font size="18.0" />
+                                                <Font name="Monaco" size="18.0" />
                                              </font>
                                           </Label>
                                        </children>
@@ -190,7 +190,7 @@
             </HBox>
             <VBox alignment="CENTER" spacing="5.0">
                <children>
-                  <Label text="Spieler" textFill="#cd0909">
+                  <Label text="讲述者" textFill="#cd0909">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>

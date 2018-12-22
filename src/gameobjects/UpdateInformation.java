@@ -9,5 +9,4 @@ public enum UpdateInformation implements Serializable{
     World_a_Player,
     World,
     Player,
-    flyingDone
 }

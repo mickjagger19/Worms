@@ -68,7 +68,7 @@ public class Explosion {
         for (Player p : players) {
             if (cover(p.getPosition())) {
                 // 如果处于爆炸范围内， 伤害用 worm 的位置到圆周的距离来计算
-                p.removeHealth((int) (GameWorld.EXPLOSION_RADIUS - getDistance(p.getPosition(), center)) *3);
+                p.removeHealth((int) (GameWorld.EXPLOSION_RADIUS - getDistance(p.getPosition(), center)) * 2);
             }
         }
     }
@@ -77,7 +77,7 @@ public class Explosion {
         return Math.sqrt(Math.pow(Math.abs(point1.getxCoord() - point2.getxCoord()), 2) + Math.pow(Math.abs(point1.getyCoord() - point2.getyCoord()), 2));
     }
 
-    public Point getCenter(){
+    Point getCenter(){
         return center;
     }
 }

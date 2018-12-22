@@ -57,11 +57,5 @@ public class Shoot implements Serializable{
                 '}';
     }
 
-//    public boolean hasChanged() {
-//        return changed;
-//    }
 
-//    public void setChanged(boolean changed) {
-//        this.changed = changed;
-//    }
 }

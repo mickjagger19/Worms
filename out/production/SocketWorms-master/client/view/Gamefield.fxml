@@ -20,14 +20,15 @@
          <children>
             <StackPane prefHeight="150.0" prefWidth="200.0">
                <children>
-                  <ImageView fitHeight="576.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="backgroundImage" fitHeight="576.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../images/background.png" />
+                        <Image url="@../../images/background1.png" />
                      </image>
                   </ImageView>
                   <Canvas fx:id="canvas_gamefield" focusTraversable="true" height="576.0" width="1024.0" />
                   <Canvas fx:id="canvas_player" focusTraversable="true" height="576.0" width="1024.0" />
                   <Canvas fx:id="canvas" focusTraversable="true" height="576.0" width="1024.0" />
+                  <Canvas fx:id="Canvas_parabola" focusTraversable="true" height="576.0" width="1024.0" />
                </children>
             </StackPane>
             <Canvas fx:id="cv_hud" focusTraversable="true" height="50.0" layoutX="10.0" layoutY="10.0" width="1024.0">
